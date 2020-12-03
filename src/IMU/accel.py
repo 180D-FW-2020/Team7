@@ -2,12 +2,14 @@ import board
 import busio
 import adafruit_lsm9ds1
 import time
-import neopixel
+#import neopixel
 from collections import deque
+
+DEBUG = 1
 
 i2c = busio.I2C(board.SCL, board.SDA)
 imu = adafruit_lsm9ds1.LSM9DS1_I2C(i2c)
-p = neopixel.NeoPixel(board.D18, 8, auto_write=False, pixel_order=neopixel.GRBW)
+#p = neopixel.NeoPixel(board.D18, 8, auto_write=False, pixel_order=neopixel.GRBW)
 
 _accX = deque()
 _accY = deque()
@@ -16,6 +18,10 @@ _gyX = deque()
 _gyY = deque()
 _gyZ = deque()
 
+punchReg = False
+punchTime = time.time()
+
+'''
 def movement(_ax,_ay,_az,_gx,_gy,_gz, _t):
 	p.fill((0,0,0,0))
 	if _ax < -1:
@@ -47,7 +53,7 @@ def movement(_ax,_ay,_az,_gx,_gy,_gz, _t):
 	if t >= 20:
 		p[4] = ((0,128,0,10))
 	p.show()
-
+'''
 
 while len(_accX) < 30:
 	ax,ay,az = imu.acceleration
@@ -86,6 +92,16 @@ while (1):
 	avgZ = sum(_gyZ) / len(_gyZ)
 
 	x = f"accel: ({avaX:.3f},{avaY:.3f},{avaZ:.3f}) gyro: ({avgX:.3f},{avgY:.3f},{avgZ:.3f}) temp: {t:.2f}"
-	movement(avaX,avaY,avaZ,avgX,avgY,avgZ, t)
+#	movement(avaX,avaY,avaZ,avgX,avgY,avgZ, t)
+
+
 	print(x, end='	\r', flush=True)
 
+	if DEBUG:
+		if avaX > 12 and punchReg == False: 
+			print("Punch!", end='\n')
+			punchReg = True
+			punchTime = time.time()
+		if time.time() - punchTime >= 1:
+			punchReg = False
+		
