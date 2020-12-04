@@ -3,10 +3,14 @@ import time
 import board
 import busio
 import adafruit_lsm9ds1
+import RPi.GPIO as GPIO
 
 from collections import deque
 
-DEBUG = 1
+DEBUG = 0
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+GPIO.setup(18,GPIO.OUT)
 
 header = ["time","accX","accY","accZ","gyroX","gyroY","gyroZ","temp"]
 
@@ -86,12 +90,14 @@ with open(fname, 'w') as csvfile:
         avmY = sum(_magY) / len(_magY)
         avmZ = sum(_magZ) / len(_magZ)
 
-        if avaX > 14 and punchReg == False: 
+        if avaX > 12 and punchReg == False: 
             print("Punch!", end='\n')
             punchReg = True
+            GPIO.output(18,GPIO.HIGH)
             punchTime = time.time()
         if time.time() - punchTime >= 1:
             punchReg = False
+            GPIO.output(18,GPIO.LOW)
 
         buffer = [time.time() - t]
         buffer.extend((avaX, avaY, avaZ))
@@ -101,6 +107,5 @@ with open(fname, 'w') as csvfile:
         buffer.append(punchReg)
 
         if DEBUG:
-            print(*buffer, end='        \r', flush=True)
-
+            print(buffer, end='	\r', flush=True)
         csvwriter.writerow(buffer)

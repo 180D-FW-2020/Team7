@@ -4,6 +4,11 @@ import adafruit_lsm9ds1
 import time
 #import neopixel
 from collections import deque
+import RPi.GPIO as GPIO
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+GPIO.setup(18,GPIO.OUT)
 
 DEBUG = 1
 
@@ -101,7 +106,9 @@ while (1):
 		if avaX > 12 and punchReg == False: 
 			print("Punch!", end='\n')
 			punchReg = True
+			GPIO.output(18,GPIO.HIGH)
 			punchTime = time.time()
 		if time.time() - punchTime >= 1:
 			punchReg = False
+			GPIO.output(18,GPIO.LOW)
 		
