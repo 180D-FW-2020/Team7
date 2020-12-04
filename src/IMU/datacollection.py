@@ -101,6 +101,6 @@ with open(fname, 'w') as csvfile:
         buffer.append(punchReg)
 
         if DEBUG:
-            print(*buffer)
+            print(*buffer, end='        \r', flush=True)
 
         csvwriter.writerow(buffer)
