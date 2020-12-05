@@ -120,6 +120,7 @@ dependencies:
     - networkx==2.5
     - numba==0.52.0
     - opencv-contrib-python==4.4.0.46
+    - paho-mqtt==1.5.1
     - pillow==8.0.1
     - psutil==5.7.3
     - pycocotools==2.0.2
