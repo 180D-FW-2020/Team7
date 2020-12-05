@@ -108,7 +108,7 @@ if __name__ == '__main__':
                     if fight.are_arms_blocking_head(humans[0]):
                         message = get_mqtt_header() + "[0]=blocking";
                     else:
-                        message = get_mqtt_header() + "[0]=idle"
+                        message = str(get_mqtt_header() + "[0]=idle")
                     #Golden child, lets publish this ish to the internet
                     if use_mqtt:
                         client.publish(mqtt_channel, message, qos = 1);

@@ -10,6 +10,7 @@ def on_disconnect(client, userdata, rc):
         print("Expected Disconnect");
 def on_message(client, userdata, message):
     #We should use this for start game and end game and all that, ####REMMEBER THIS LATER
+    #this will print out weird..... we'll figure it out later
     print(str(message.payload))
 
 client = mqtt.Client();
