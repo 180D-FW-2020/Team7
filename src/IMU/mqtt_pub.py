@@ -1,5 +1,6 @@
 import time
 import random
+import json
 from paho.mqtt import client as mqtt_client
 broker = 'broker.emqx.io'
 port = 1883
@@ -33,6 +34,7 @@ def publish(client, action):
          '''
          action = input("press key: ")
          msg = {"player" : "player1", "action" : action}
+         msg = json.dumps(msg)
          result = client.publish(topic, msg)
          # result: [0, 1]
          status = result[0]
