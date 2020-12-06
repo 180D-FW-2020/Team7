@@ -22,7 +22,17 @@ def connect_mqtt():
 def publish(client, action):
      while True:
          time.sleep(1)
-         msg = f"action: {action}"
+         '''
+         "b" for boxing
+         "h" for hook
+         "c" for cross
+         "u" for receive uppercut
+         "t" for take punch
+         "s" for receive stomach uppercut
+         all else ignored
+         '''
+         action = input("press key: ")
+         msg = {"player" : "player1", "action" : action}
          result = client.publish(topic, msg)
          # result: [0, 1]
          status = result[0]
