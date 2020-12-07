@@ -24,12 +24,15 @@ def publish(client, action):
      while True:
          time.sleep(1)
          '''
-         "b" for boxing
-         "h" for hook
-         "c" for cross
-         "u" for receive uppercut
-         "t" for take punch
-         "s" for receive stomach uppercut
+         "b" - Boxing
+         "h" - Hook Punch
+         "c" - Cross Punch
+         "o" - Body Block
+         "u" - Receive Uppercut
+         "t" - Taking Punch
+         "s" - Receive Stomach Uppercut
+         "p" - pause/resume game (in boxing scene)
+         "g" - start game (in menu scene)
          all else ignored
          '''
          action = input("press key: ")
