@@ -40,12 +40,12 @@ Background = 18
 def print_humans_info(humans):
         for human in humans:
             if human.part_count() > 14:# have only complete figures or near complete figures
-                print("For Human: ");
+                print("For Human: ")
                 for i in range(common.CocoPart.Background.value):
                     if i not in human.body_parts.keys():
                         continue
                     body_part = human.body_parts[i]
-                    print("\t" + str(body_part.get_part_name()) + "::" + str(body_part.part_idx) + "::" + " ----X: " + str(body_part.x) + " Y: " + str(body_part.y));
+                    print("\t" + str(body_part.get_part_name()) + "::" + str(body_part.part_idx) + "::" + " ----X: " + str(body_part.x) + " Y: " + str(body_part.y))
 def print_arms_blocking_head(human):
         print("Left Wrist: (" + str(human.body_parts[LWrist].y) + "," + str(human.body_parts[LWrist].x) + ")")
         print("Rigt Wrist: (" + str(human.body_parts[RWrist].y) + "," + str(human.body_parts[RWrist].x) + ")")
@@ -55,10 +55,10 @@ def print_arms_blocking_head(human):
 
 def parse_humans(humans):
     if len(humans) > 1:
-        print("Humans are multiple");
+        print("Humans are multiple")
     elif len(humans) == 1:
-        print("Human is one");
-    return len(humans);
+        print("Human is one")
+    return len(humans)
 
 ##########################Basic Coordinate Checks ##########################
 #These are the basic x/y coordinate mapping estimation building blocks
@@ -68,14 +68,14 @@ def check_proximity(x, y, margin = .1):
     y1 = y - (y * margin)
     y2 = y + (y * margin)
     if x1 <= y <= x2 or y1 <= x <= y2:
-        return True;
+        return True
     else:
-        return False;
+        return False
 ####x and y axis in the API are inverted, I pretend to fix it here
 def check_x_plane(body_part1, body_part2):
-    return check_proximity(body_part1.y, body_part2.y);
+    return check_proximity(body_part1.y, body_part2.y)
 def check_y_plane(body_part1, body_part2):
-    return check_proximity(body_part1.x, body_part2.x);
+    return check_proximity(body_part1.x, body_part2.x)
 def check_x_less(body_part1, body_part2):
     if body_part1.y < body_part2.y:
         return True
@@ -103,12 +103,12 @@ def is_medial_y(body_part1, body_part2, body_part3):
 def in_range(x, y, z):
         if x < z:
                 if x < y < z:
-                        return True;
-                return False;
+                        return True
+                return False
         else:
                 if z < y < x:
-                        return True;
-                return False;
+                        return True
+                return False
 
 
 ###########################################More Advanced Coordainte Maps###############
@@ -121,12 +121,12 @@ def are_shoulders_square(human):
         print("Shoulders are square")
 def is_right_arm_straight_down(human):
     if check_y_plane(human.body_parts[RShoulder],human.body_parts[RElbow]) and check_y_plane(human.body_parts[RWrist],human.body_parts[RElbow]) and check_x_less(human.body_parts[RWrist], human.body_parts[RElbow]) and check_x_less(human.body_parts[RElbow], human.body_parts[RShoulder]):
-        print("Right Arm is straight down");
+        print("Right Arm is straight down")
 def is_left_arm_straight_down(human):
     if check_y_plane(human.body_parts[body_parts.LShoulder.value],human.body_parts[body_parts.LElbow.value]) and check_y_plane(human.body_parts[body_parts.LWrist.value],human.body_parts[body_parts.LElbow.value]) and check_x_less(human.body_parts[LWrist], human.body_parts[LElbow]) and check_x_less(human.body_parts[LElbow], human.body_parts[LShoulder]):
-        print("Left Arm is straight down");
+        print("Left Arm is straight down")
 def are_arms_blocking_head(human):
         if is_medial_y(human.body_parts[LWrist], human.body_parts[Nose], human.body_parts[RWrist]) and is_medial_x(human.body_parts[LWrist],human.body_parts[Nose],human.body_parts[LElbow]) and is_medial_x(human.body_parts[RWrist],human.body_parts[Nose],human.body_parts[RElbow]):
-                print("Human is blocking face");
-                return True;
-        return False;
+                print("Human is blocking face")
+                return True
+        return False
