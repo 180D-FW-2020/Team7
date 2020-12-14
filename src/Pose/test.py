@@ -26,8 +26,8 @@ fps_time = 0
 debug = False
 use_video = False
 use_mqtt = False
-w = 200
-h = 150
+w =432
+h = 368
 RESIZE_OUT_RATIO = 2.0
 
 
