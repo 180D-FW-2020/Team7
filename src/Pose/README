@@ -1,0 +1,34 @@
+
+############################INTRO##########################
+Mainly for Hiro, hopefully you get to know how to use this from this read me
+
+So basically, I tried to make it so that you only have to deal withmy code from the MQTT side, and not have to mess with the internals, because they're very senetive as they are
+
+Currently, there is one set feature that makes it able to work, "blocking"
+What is this "blocking" you might ask? It is putting your hands above your head, but having your elbows below your face. Your face(or at leaste technically your nose)must be visible along with your hands and elbows, so it doesn't really look like blocking, but for a demo, it might as well be good enough.
+
+#####################################Structure############################
+For the structure of this, there is 2 files you need to worry about when running this
+
+test.py and move_classification.py. These have to run in a compatible conda environment(left my conda config in this directory so you can refernce)
+Test.py is the script that you run while move_classification.py contains move types(will get much bigger as time goes on)
+To run, there are 3 parameters that need to be considered
+
+   --input [video | camera] # defaults to your webcam, but can also use a preset video(useful for decoding or soft demo)
+   --video [video_name] # required when you specify video, and must point to valid video(exit is disrty since its waiting for EOF)
+   --mqtt [mqtt_tag] #enables sending information to mqtt, argument is the channel you wanna send it to
+
+Example run to debug is:
+
+./test.py --input video --video 7block.webm --mqtt team7gang
+
+This will run the video in this direcory and send messages to that mqtt channel
+This video is meant to highlight the blocking capability
+Also includes nice video to show you what is happening
+
+###################################MQTT##############################
+
+As said previously, mqtt is featured, and I have a dummy mqtt subscriber.py to read the stuff(just run it with the above command and itll work)
+When reading, you might notice that the output looks likething like b'TIME::[0]-idle'. The outside b'*' is a result of the format being client.payload() when its reading the message, and its up to you to see how you want to deal with that
+
+If you have any questions, let me know
