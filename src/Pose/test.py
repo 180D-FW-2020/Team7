@@ -26,8 +26,8 @@ fps_time = 0
 debug = False
 use_video = False
 use_mqtt = False
-w = 160
-h = 120
+w = 200
+h = 150
 RESIZE_OUT_RATIO = 2.0
 
 
@@ -86,6 +86,7 @@ if __name__ == '__main__':
 
 
     while cam.isOpened():
+        message = ""
         ret_val, image = cam.read()
         #humans is an object arr that contains all the ppl(0, 1, 1+ however many)
         humans = e.inference(image, resize_to_default=(w > 0 and h > 0), upsample_size=RESIZE_OUT_RATIO)
@@ -111,14 +112,15 @@ if __name__ == '__main__':
                     else:
                         pass
                     #Golden child, lets publish this ish to the internet
-                    if use_mqtt:
+                    if use_mqtt and message != "":
                         client.publish(mqtt_channel, message, qos = 1)
                         print("######Sending Message##########\n" + message)
                 except:
                     print("Error with parsing")
         #cv2.putText(image,"FPS: %f" % (1.0 / (time.time() - fps_time)),(10, 10),  cv2.FONT_HERSHEY_SIMPLEX, 0.5,(0, 255, 0), 2)
         #prints out video to screen so we can debut visually and see
-        cv2.imshow('tf-pose-estimation result VIDEO/WEBCAM', image)
+        if debug:
+            cv2.imshow('tf-pose-estimation result VIDEO/WEBCAM', image)
         #fps_time = time.time()
         if cv2.waitKey(1) == 27:
             break
