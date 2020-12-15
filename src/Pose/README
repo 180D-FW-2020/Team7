@@ -32,3 +32,13 @@ As said previously, mqtt is featured, and I have a dummy mqtt subscriber.py to r
 When reading, you might notice that the output looks likething like b'TIME::[0]-idle'. The outside b'*' is a result of the format being client.payload() when its reading the message, and its up to you to see how you want to deal with that
 
 If you have any questions, let me know
+
+
+###########################Changes by Ken suzuki on 12/11/2020
+added nose classification to nose for arms
+ reduce part count requirement(Note by omar: Should deprecate req)
+ changed mqtt subscirber message format
+ did upsampling, reduced image sizing
+
+########################Changes by omar on 13/11/2020
+Changed back definiitoon to original form, graph wasn't working without
