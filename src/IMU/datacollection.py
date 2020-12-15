@@ -12,7 +12,7 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 GPIO.setup(18,GPIO.OUT)
 
-header = ["time","accX","accY","accZ","gyroX","gyroY","gyroZ","temp"]
+header = ["time","aX","aY","aZ","gX","gY","gZ","faX","faY","faZ","fgX","fgY","fgZ","temp"]
 
 fname = "./data/{}.csv".format(time.strftime('%Y%m%d-%H%M%S'))
 
@@ -25,7 +25,15 @@ with open(fname, 'w') as csvfile:
     punchReg = False
     punchTime = time.time()
 
+    windowSize = 20
+    threshold = 14
+
+    header = ["time","aX","aY","aZ","gX","gY","gZ","faX","faY","faZ","fgX","fgY","fgZ","temp"]
+    fname = "./data/{}.csv".format(time.strftime('%Y%m%d-%H%M%S'))
+
+
     csvwriter = csv.writer(csvfile)
+    csvwriter.writerow([f"window size: {windowSize}", f"acc threshold: {threshold}"])
     csvwriter.writerow(header)
     t = time.time()
 
@@ -39,7 +47,7 @@ with open(fname, 'w') as csvfile:
     _magY = deque()
     _magZ = deque()
 
-    while len(_accX) < 30:
+    while len(_accX) < windowSize:
         ax,ay,az = imu.acceleration
         gx,gy,gz = imu.gyro
         mx,my,mz = imu.magnetic
@@ -53,12 +61,12 @@ with open(fname, 'w') as csvfile:
         _magY.append(my)
         _magZ.append(mz)
 
-
+    punchCounter = 0
     while 1:
         ax,ay,az = imu.acceleration
         gx,gy,gz = imu.gyro
         mx,my,mz = imu.magnetic
-        t = imu.temperature
+        temp = imu.temperature
 
         _accX.popleft()
         _accY.popleft()
@@ -90,21 +98,25 @@ with open(fname, 'w') as csvfile:
         avmY = sum(_magY) / len(_magY)
         avmZ = sum(_magZ) / len(_magZ)
 
-        if avaX > 12 and punchReg == False: 
-            print("Punch!", end='\n')
+        if avaX > threshold and punchReg == False: 
             punchReg = True
+            punchCounter += 1
+            print(f"Punch! {punchCounter}", end='\n')
             GPIO.output(18,GPIO.HIGH)
             punchTime = time.time()
-        if time.time() - punchTime >= 1:
+        if time.time() - punchTime >= 0.5:
             punchReg = False
             GPIO.output(18,GPIO.LOW)
 
         buffer = [time.time() - t]
+        buffer.extend(imu.acceleration)
+        buffer.extend(imu.gyro)
         buffer.extend((avaX, avaY, avaZ))
         buffer.extend((avgX, avgY, avgZ))
         buffer.extend((avmX, avmY, avmZ))
-        buffer.append(t)
+        buffer.append(temp)
         buffer.append(punchReg)
+        buffer.append(punchCounter)
 
         if DEBUG:
             print(buffer, end='	\r', flush=True)
