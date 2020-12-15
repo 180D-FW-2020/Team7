@@ -66,6 +66,7 @@ while(True):
 	action = ''
 	print("Please Talk!")
 	with sr.Microphone() as source:
+		spoken = True
 		canPublish = False
 		audio_data=r.record(source, duration=5)
 		print("Recognizing...")
@@ -73,8 +74,11 @@ while(True):
 		try:
 			text=r.recognize_google(audio_data)
 		except:
+			spoken = False
 			print("waiting for next comand...")
-		print("You said: {}".format(text))
+
+		if(spoken):
+			print("You said: {}".format(text))
 
 		# find if certain words exist within said phrase
 		if(text.find("begin") != -1 or text.find("start") != -1):
