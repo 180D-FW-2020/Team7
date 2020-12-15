@@ -37,7 +37,6 @@ def publish(client, action):
              print(f"Failed to send message to topic {topic}")
          break
 
-text = ""
 def run():
     client = connect_mqtt()
     #client.loop_start()
@@ -49,14 +48,20 @@ import speech_recognition as sr
 r=sr.Recognizer()
 
 while(True):
+	text = ""
 	print("Please Talk!")
 	with sr.Microphone() as source:
 		canPublish = False
 		audio_data=r.record(source, duration=5)
 		print("Recognizing...")
-		text=r.recognize_google(audio_data)
+
+		try:
+			text=r.recognize_google(audio_data)
+		except:
+			print("waiting for next comand...")
 		print("You said: ")
 		print(text)
+		
 		# find if certain words exist within said phrase
 		if(text.find("begin") != -1 or text.find("start") != -1):
 			canPublish = True
