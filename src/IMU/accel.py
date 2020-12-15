@@ -68,8 +68,7 @@ def movement(_ax,_ay,_az,_gx,_gy,_gz, _t):
 	if t <= 20:
 		p[3] = ((0,0,128,10))
 	if t >= 20:
-		p[4] = ((0,128,0,10))
-	p.show()
+		p[4] = ((0,128
 '''
 
 def connect_mqtt():
@@ -86,7 +85,12 @@ def connect_mqtt():
 
 def publish(client, action):
 	global PRINT
-	msg = f"action: {action}"
+	dict = {
+		1: "b",
+		2: "c",
+		3: "h"
+	}
+	msg = json.dumps({"player": "player1", "action": dict[action]})
 	result = client.publish(topic, msg)
 	# result: [0, 1]
 	status = result[0]
@@ -116,12 +120,6 @@ def loop():
 	global DEBUG
 	global MQTT
 	global PRINT
-
-	dict = {
-		1: "b",
-		2: "c",
-		3: "h"
-	}
 
 	iter = 0
 	iterstart = punchTime
@@ -172,8 +170,8 @@ def loop():
 #				print(iter)
 		if MQTT:
 			if pubReg:
-				action = dict[random.randint(1,3)]
-				publish(client, json.dumps({"player": "player1", "action": action}))
+				action = random.randint(1,3)
+				publish(client, action)
 				pubReg = False
 		iter += 1
 
