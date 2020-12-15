@@ -1,7 +1,9 @@
 Work done by Hirofumi Koichihara.
 
-Necessary Package:
+Necessary Libraries:
 
 pip install SpeechRecognition
 
 pip install pyaudio
+
+Python Version: 3.7.0
