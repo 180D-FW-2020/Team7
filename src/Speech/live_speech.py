@@ -5,6 +5,7 @@ then publish mqtt if command is detected
 """
 import time
 import random
+import json
 from paho.mqtt import client as mqtt_client
 broker = 'broker.emqx.io'
 port = 1883
@@ -24,10 +25,25 @@ def connect_mqtt():
     client.connect(broker, port)
     return client
 
+action = ''
 def publish(client, action):
      while True:
          time.sleep(1)
-         msg = f"Speech: {action}"
+         '''
+         "b" - Boxing
+         "h" - Hook Punch
+         "c" - Cross Punch
+         "o" - Body Block
+         "u" - Receive Uppercut
+         "t" - Taking Punch
+         "s" - Receive Stomach Uppercut
+         "p" - pause/resume game (in boxing scene)
+         "g" - start game (in menu scene)
+         all else ignored
+         '''
+         #action = input("press key: ")
+         msg = {"player" : "player1", "action" : action}
+         msg = json.dumps(msg)
          result = client.publish(topic, msg)
          # result: [0, 1]
          status = result[0]
@@ -40,15 +56,14 @@ def publish(client, action):
 def run():
     client = connect_mqtt()
     #client.loop_start()
-    publish(client, text)
-
-
+    publish(client, action)
 
 import speech_recognition as sr
 r=sr.Recognizer()
 
 while(True):
 	text = ""
+	action = ''
 	print("Please Talk!")
 	with sr.Microphone() as source:
 		canPublish = False
@@ -59,31 +74,22 @@ while(True):
 			text=r.recognize_google(audio_data)
 		except:
 			print("waiting for next comand...")
-		print("You said: ")
-		print(text)
-		
+		print("You said: {}".format(text))
+
 		# find if certain words exist within said phrase
 		if(text.find("begin") != -1 or text.find("start") != -1):
 			canPublish = True
-			print("The game will start soon!")
-		elif(text.find("fight") != -1):
+			action = 'g'
+			print("The game will start!")
+		elif(text.find("resume") != -1 or text.find("pause") != -1):
 			canPublish = True
-			print("Fighting mode!")
-		elif(text.find("stop") != -1 or text.find("pause") != -1):
+			action = 'p'
+			print("Paused/Resumed")
+		elif(text.find("quit") != -1):
 			canPublish = True
-			print("Game has stopped! Say 'Resume' or 'Restart' or 'Continue' to come back!")
-			with sr.Microphone() as source2:
-				audio_data2=r.record(source2, duration=5)
-				print("Recognizing...")
-				text2=r.recognize_google(audio_data2)
-				print("You said: " + text2)
-				if(text2.find("resume") != -1 or text2.find("restart") != -1 or text2.find("continue") != -1):
-					print("Welcome back!")
+			action = 'q'
+			print("Game quitted")
 		
 		if(canPublish):
 				if __name__ == '__main__':
 					run()
-
-
-
-
