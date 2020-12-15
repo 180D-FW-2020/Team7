@@ -68,7 +68,7 @@ while(True):
 	with sr.Microphone() as source:
 		spoken = True
 		canPublish = False
-		audio_data=r.record(source, duration=5)
+		audio_data=r.record(source, duration=3)
 		print("Recognizing...")
 
 		try:
