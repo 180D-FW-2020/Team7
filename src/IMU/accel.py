@@ -6,6 +6,7 @@ import time
 from collections import deque
 import RPi.GPIO as GPIO
 import random
+import json
 from paho.mqtt import client as mqtt_client
 
 GPIO.setmode(GPIO.BCM)
@@ -14,6 +15,11 @@ GPIO.setup(18,GPIO.OUT)
 
 DEBUG = 1
 MQTT = 1
+PRINT = 1
+
+windowSize = 20
+pthreshold = 14
+gthreshold = -150
 
 broker = 'broker.emqx.io'
 port = 1883
@@ -79,6 +85,7 @@ def connect_mqtt():
 	return client
 
 def publish(client, action):
+	global PRINT
 	msg = f"action: {action}"
 	result = client.publish(topic, msg)
 	# result: [0, 1]
@@ -89,7 +96,7 @@ def publish(client, action):
 		print(f"Failed to send message to topic {topic}")
 
 def setup():
-	while len(_accX) < 20:
+	while len(_accX) < windowSize:
 		ax,ay,az = imu.acceleration
 		gx,gy,gz = imu.gyro
 		_accX.append(ax)
@@ -105,9 +112,19 @@ def loop():
 	pubReg = False
 	punchTime = time.time()
 	client = connect_mqtt()
+
 	global DEBUG
 	global MQTT
+	global PRINT
 
+	dict = {
+		1: "b",
+		2: "c",
+		3: "h"
+	}
+
+	iter = 0
+	iterstart = punchTime
 	while (1):
 		client.loop_start()
 		ax,ay,az = imu.acceleration
@@ -137,24 +154,28 @@ def loop():
 		x = f"accel: ({avaX:.3f},{avaY:.3f},{avaZ:.3f}) gyro: ({avgX:.3f},{avgY:.3f},{avgZ:.3f}) temp: {t:.2f}"
 	#	movement(avaX,avaY,avaZ,avgX,avgY,avgZ, t)
 
-
-		print(x, end='	\r', flush=True)
+		if PRINT:
+			print(x, end='	\r', flush=True)
 
 		if DEBUG:
-			if avaX > 15 and punchReg == False: 
+			if avaX > pthreshold and avgX < gthreshold and punchReg == False: 
 				print("Punch!", end='\n')
 				punchReg = True
 				pubReg = True
 				hitcounter += 1
 				GPIO.output(18,GPIO.HIGH)
 				punchTime = time.time()
-			if time.time() - punchTime >= 0.500:
+			if time.time() - punchTime >= 1:
 				punchReg = False
 				GPIO.output(18,GPIO.LOW)
+#			if time.time() - iterstart >= 10:
+#				print(iter)
 		if MQTT:
 			if pubReg:
-				publish(client, f"Punch! {hitcounter}")
+				action = dict[random.randint(1,3)]
+				publish(client, json.dumps({"player": "player1", "action": action}))
 				pubReg = False
+		iter += 1
 
 if __name__ == "__main__":
 	setup()
