@@ -1,3 +1,8 @@
+"""
+Send only one message for mqtt per command recognized
+Use for loop to sample audio every 5 seconds or so, 
+then publish mqtt if command is detected
+"""
 import time
 import random
 from paho.mqtt import client as mqtt_client
@@ -30,10 +35,12 @@ def publish(client, action):
              print(f"Send `{msg}` to topic `{topic}`")
          else:
              print(f"Failed to send message to topic {topic}")
+         break
 
+text = ""
 def run():
     client = connect_mqtt()
-    client.loop_start()
+    #client.loop_start()
     publish(client, text)
 
 
@@ -41,8 +48,8 @@ def run():
 import speech_recognition as sr
 r=sr.Recognizer()
 print("Please Talk!")
-text = ""
 with sr.Microphone() as source:
+	canPublish = False
 	audio_data=r.record(source, duration=5)
 	print("Recognizing...")
 	text=r.recognize_google(audio_data)
@@ -50,10 +57,13 @@ with sr.Microphone() as source:
 	print(text)
 	# find if certain words exist within said phrase
 	if(text.find("begin") != -1 or text.find("start") != -1):
+		canPublish = True
 		print("The game will start soon!")
 	elif(text.find("fight") != -1):
+		canPublish = True
 		print("Fighting mode!")
 	elif(text.find("stop") != -1 or text.find("pause") != -1):
+		canPublish = True
 		print("Game has stopped! Say 'Resume' or 'Restart' or 'Continue' to come back!")
 		with sr.Microphone() as source2:
 			audio_data2=r.record(source2, duration=5)
@@ -62,8 +72,11 @@ with sr.Microphone() as source:
 			print("You said: " + text2)
 			if(text2.find("resume") != -1 or text2.find("restart") != -1 or text2.find("continue") != -1):
 				print("Welcome back!")
-	if __name__ == '__main__':
-		run()
+	
+	if(canPublish):
+			if __name__ == '__main__':
+				run()
+
 
 
 
