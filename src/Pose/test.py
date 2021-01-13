@@ -74,7 +74,7 @@ if __name__ == '__main__':
         client.connect_async('broker.emqx.io')
         client.loop_start()
     logger.debug('initialization %s : %s' % ('mobilenet_thin', get_graph_path('mobilenet_thin')))
-    e = TfPoseEstimator(get_graph_path('mobilenet_thin'), target_size=(w, h), trt_bool=str2bool("False"))
+    e = TfPoseEstimator(get_graph_path('mobilenet_v2_small'), target_size=(w, h), trt_bool=str2bool("False"))
     #Allows us to either use video or camera as input(When finite video wil lnot exit cleanly)
     if use_video:
         cam = cv2.VideoCapture(args.video)
@@ -120,8 +120,13 @@ if __name__ == '__main__':
         #cv2.putText(image,"FPS: %f" % (1.0 / (time.time() - fps_time)),(10, 10),  cv2.FONT_HERSHEY_SIMPLEX, 0.5,(0, 255, 0), 2)
         #prints out video to screen so we can debut visually and see
         if debug:
+            cv2.putText(image,
+                        "FPS: %f" % (1.0 / (time.time() - fps_time)),
+                        (10, 10),  cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                        (0, 255, 0), 2);
+
             cv2.imshow('tf-pose-estimation result VIDEO/WEBCAM', image)
-        #fps_time = time.time()
+        fps_time = time.time()
         if cv2.waitKey(1) == 27:
             break
         logger.debug('finished+')
