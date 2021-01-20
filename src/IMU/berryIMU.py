@@ -11,7 +11,7 @@
 #    This script is python 2.7 and 3 compatible
 #
 #    Feel free to do whatever you like with this code.
-#    Distributed as-is; no warranty is given.
+#    Distributed as-is no warranty is given.
 #
 #    http://ozzmaker.com/
 
@@ -41,12 +41,12 @@ MAG_MEDIANTABLESIZE = 9         # Median filter table size for magnetometer. Hig
 # Calibrating the compass isnt mandatory, however a calibrated
 # compass will result in a more accurate heading value.
 
-magXmin =  0
-magYmin =  0
-magZmin =  0
-magXmax =  0
-magYmax =  0
-magZmax =  0
+magXmin =  -561
+magYmin =  -641
+magZmin =  -478
+magXmax =  1383
+magYmax =  1774
+magZmax =  1523
 
 
 '''
@@ -225,12 +225,12 @@ while True:
     ###############################################
     #### Apply low pass filter ####
     ###############################################
-    MAGx =  MAGx  * MAG_LPF_FACTOR + oldXMagRawValue*(1 - MAG_LPF_FACTOR);
-    MAGy =  MAGy  * MAG_LPF_FACTOR + oldYMagRawValue*(1 - MAG_LPF_FACTOR);
-    MAGz =  MAGz  * MAG_LPF_FACTOR + oldZMagRawValue*(1 - MAG_LPF_FACTOR);
-    ACCx =  ACCx  * ACC_LPF_FACTOR + oldXAccRawValue*(1 - ACC_LPF_FACTOR);
-    ACCy =  ACCy  * ACC_LPF_FACTOR + oldYAccRawValue*(1 - ACC_LPF_FACTOR);
-    ACCz =  ACCz  * ACC_LPF_FACTOR + oldZAccRawValue*(1 - ACC_LPF_FACTOR);
+    MAGx =  MAGx  * MAG_LPF_FACTOR + oldXMagRawValue*(1 - MAG_LPF_FACTOR)
+    MAGy =  MAGy  * MAG_LPF_FACTOR + oldYMagRawValue*(1 - MAG_LPF_FACTOR)
+    MAGz =  MAGz  * MAG_LPF_FACTOR + oldZMagRawValue*(1 - MAG_LPF_FACTOR)
+    ACCx =  ACCx  * ACC_LPF_FACTOR + oldXAccRawValue*(1 - ACC_LPF_FACTOR)
+    ACCy =  ACCy  * ACC_LPF_FACTOR + oldYAccRawValue*(1 - ACC_LPF_FACTOR)
+    ACCz =  ACCz  * ACC_LPF_FACTOR + oldZAccRawValue*(1 - ACC_LPF_FACTOR)
 
     oldXMagRawValue = MAGx
     oldYMagRawValue = MAGy
@@ -264,9 +264,9 @@ while True:
     acc_medianTable2Z.sort()
 
     # The middle value is the value we are interested in
-    ACCx = acc_medianTable2X[int(ACC_MEDIANTABLESIZE/2)];
-    ACCy = acc_medianTable2Y[int(ACC_MEDIANTABLESIZE/2)];
-    ACCz = acc_medianTable2Z[int(ACC_MEDIANTABLESIZE/2)];
+    ACCx = acc_medianTable2X[int(ACC_MEDIANTABLESIZE/2)]
+    ACCy = acc_medianTable2Y[int(ACC_MEDIANTABLESIZE/2)]
+    ACCz = acc_medianTable2Z[int(ACC_MEDIANTABLESIZE/2)]
 
 
 
@@ -295,9 +295,9 @@ while True:
     mag_medianTable2Z.sort()
 
     # The middle value is the value we are interested in
-    MAGx = mag_medianTable2X[int(MAG_MEDIANTABLESIZE/2)];
-    MAGy = mag_medianTable2Y[int(MAG_MEDIANTABLESIZE/2)];
-    MAGz = mag_medianTable2Z[int(MAG_MEDIANTABLESIZE/2)];
+    MAGx = mag_medianTable2X[int(MAG_MEDIANTABLESIZE/2)]
+    MAGy = mag_medianTable2Y[int(MAG_MEDIANTABLESIZE/2)]
+    MAGz = mag_medianTable2Z[int(MAG_MEDIANTABLESIZE/2)]
 
 
 
