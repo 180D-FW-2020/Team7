@@ -1,15 +1,28 @@
-import adafruit_lsm9ds1
-import board
-import busio
+#!/usr/bin/python
+#
+#    This program  reads the angles from the acceleromteer, gyroscope
+#    and mangnetometer on a BerryIMU connected to a Raspberry Pi.
+#
+#    This program includes two filters (low pass and median) to improve the
+#    values returned from BerryIMU by reducing noise.
+#
+#    The BerryIMUv1, BerryIMUv2 and BerryIMUv3 are supported
+#
+#    This script is python 2.7 and 3 compatible
+#
+#    Feel free to do whatever you like with this code.
+#    Distributed as-is; no warranty is given.
+#
+#    http://ozzmaker.com/
+
+
+
 import sys
 import time
 import math
+import IMU
 import datetime
 import os
-
-
-i2c = busio.I2C(board.SCL, board.SDA)
-imu = adafruit_lsm9ds1.LSM9DS1_I2C(i2c)
 
 
 RAD_TO_DEG = 57.29578
@@ -20,6 +33,34 @@ MAG_LPF_FACTOR = 0.4    # Low pass filter constant magnetometer
 ACC_LPF_FACTOR = 0.4    # Low pass filter constant for accelerometer
 ACC_MEDIANTABLESIZE = 9         # Median filter table size for accelerometer. Higher = smoother but a longer delay
 MAG_MEDIANTABLESIZE = 9         # Median filter table size for magnetometer. Higher = smoother but a longer delay
+
+
+
+################# Compass Calibration values ############
+# Use calibrateBerryIMU.py to get calibration values
+# Calibrating the compass isnt mandatory, however a calibrated
+# compass will result in a more accurate heading value.
+
+magXmin =  0
+magYmin =  0
+magZmin =  0
+magXmax =  0
+magYmax =  0
+magZmax =  0
+
+
+'''
+Here is an example:
+magXmin =  -1748
+magYmin =  -1025
+magZmin =  -1876
+magXmax =  959
+magYmax =  1651
+magZmax =  708
+Dont use the above values, these are just an example.
+'''
+############### END Calibration offsets #################
+
 
 #Kalman filter variables
 Q_angle = 0.02
@@ -37,6 +78,8 @@ YP_10 = 0.0
 YP_11 = 0.0
 KFangleX = 0.0
 KFangleY = 0.0
+
+
 
 def kalmanFilterY ( accAngle, gyroRate, DT):
     y=0.0
@@ -109,6 +152,7 @@ def kalmanFilterX ( accAngle, gyroRate, DT):
 
     return KFangleX
 
+
 gyroXangle = 0.0
 gyroYangle = 0.0
 gyroZangle = 0.0
@@ -127,6 +171,8 @@ oldZAccRawValue = 0
 
 a = datetime.datetime.now()
 
+
+
 #Setup the tables for the mdeian filter. Fill them all with '1' so we dont get devide by zero error
 acc_medianTable1X = [1] * ACC_MEDIANTABLESIZE
 acc_medianTable1Y = [1] * ACC_MEDIANTABLESIZE
@@ -141,31 +187,50 @@ mag_medianTable2X = [1] * MAG_MEDIANTABLESIZE
 mag_medianTable2Y = [1] * MAG_MEDIANTABLESIZE
 mag_medianTable2Z = [1] * MAG_MEDIANTABLESIZE
 
+IMU.detectIMU()     #Detect if BerryIMU is connected.
+if(IMU.BerryIMUversion == 99):
+    print(" No BerryIMU found... exiting ")
+    sys.exit()
+IMU.initIMU()       #Initialise the accelerometer, gyroscope and compass
 
-while 1:
-    (ACCx, ACCy, ACCz) = imu.acceleration
-    (GYRx, GYRy, GYRz) = imu.gyro
-    (MAGx, MAGy, MAGz) = imu.magnetic
 
-    '''
+while True:
+
+    #Read the accelerometer,gyroscope and magnetometer values
+    ACCx = IMU.readACCx()
+    ACCy = IMU.readACCy()
+    ACCz = IMU.readACCz()
+    GYRx = IMU.readGYRx()
+    GYRy = IMU.readGYRy()
+    GYRz = IMU.readGYRz()
+    MAGx = IMU.readMAGx()
+    MAGy = IMU.readMAGy()
+    MAGz = IMU.readMAGz()
+
+
+    #Apply compass calibration
     MAGx -= (magXmin + magXmax) /2
     MAGy -= (magYmin + magYmax) /2
     MAGz -= (magZmin + magZmax) /2
-    '''
+
+
+    ##Calculate loop Period(LP). How long between Gyro Reads
     b = datetime.datetime.now() - a
     a = datetime.datetime.now()
     LP = b.microseconds/(1000000*1.0)
     outputString = "Loop Time %5.2f " % ( LP )
 
+
+
     ###############################################
     #### Apply low pass filter ####
     ###############################################
-    MAGx =  MAGx  * MAG_LPF_FACTOR + oldXMagRawValue*(1 - MAG_LPF_FACTOR)
-    MAGy =  MAGy  * MAG_LPF_FACTOR + oldYMagRawValue*(1 - MAG_LPF_FACTOR)
-    MAGz =  MAGz  * MAG_LPF_FACTOR + oldZMagRawValue*(1 - MAG_LPF_FACTOR)
-    ACCx =  ACCx  * ACC_LPF_FACTOR + oldXAccRawValue*(1 - ACC_LPF_FACTOR)
-    ACCy =  ACCy  * ACC_LPF_FACTOR + oldYAccRawValue*(1 - ACC_LPF_FACTOR)
-    ACCz =  ACCz  * ACC_LPF_FACTOR + oldZAccRawValue*(1 - ACC_LPF_FACTOR)
+    MAGx =  MAGx  * MAG_LPF_FACTOR + oldXMagRawValue*(1 - MAG_LPF_FACTOR);
+    MAGy =  MAGy  * MAG_LPF_FACTOR + oldYMagRawValue*(1 - MAG_LPF_FACTOR);
+    MAGz =  MAGz  * MAG_LPF_FACTOR + oldZMagRawValue*(1 - MAG_LPF_FACTOR);
+    ACCx =  ACCx  * ACC_LPF_FACTOR + oldXAccRawValue*(1 - ACC_LPF_FACTOR);
+    ACCy =  ACCy  * ACC_LPF_FACTOR + oldYAccRawValue*(1 - ACC_LPF_FACTOR);
+    ACCz =  ACCz  * ACC_LPF_FACTOR + oldZAccRawValue*(1 - ACC_LPF_FACTOR);
 
     oldXMagRawValue = MAGx
     oldYMagRawValue = MAGy
@@ -199,9 +264,9 @@ while 1:
     acc_medianTable2Z.sort()
 
     # The middle value is the value we are interested in
-    ACCx = acc_medianTable2X[int(ACC_MEDIANTABLESIZE/2)] 
-    ACCy = acc_medianTable2Y[int(ACC_MEDIANTABLESIZE/2)] 
-    ACCz = acc_medianTable2Z[int(ACC_MEDIANTABLESIZE/2)] 
+    ACCx = acc_medianTable2X[int(ACC_MEDIANTABLESIZE/2)];
+    ACCy = acc_medianTable2Y[int(ACC_MEDIANTABLESIZE/2)];
+    ACCz = acc_medianTable2Z[int(ACC_MEDIANTABLESIZE/2)];
 
 
 
@@ -230,9 +295,9 @@ while 1:
     mag_medianTable2Z.sort()
 
     # The middle value is the value we are interested in
-    MAGx = mag_medianTable2X[int(MAG_MEDIANTABLESIZE/2)] 
-    MAGy = mag_medianTable2Y[int(MAG_MEDIANTABLESIZE/2)] 
-    MAGz = mag_medianTable2Z[int(MAG_MEDIANTABLESIZE/2)] 
+    MAGx = mag_medianTable2X[int(MAG_MEDIANTABLESIZE/2)];
+    MAGy = mag_medianTable2Y[int(MAG_MEDIANTABLESIZE/2)];
+    MAGz = mag_medianTable2Z[int(MAG_MEDIANTABLESIZE/2)];
 
 
 
@@ -288,12 +353,22 @@ while 1:
     pitch = math.asin(accXnorm)
     roll = -math.asin(accYnorm/math.cos(pitch))
 
+
+    #Calculate the new tilt compensated values
+    #The compass and accelerometer are orientated differently on the the BerryIMUv1, v2 and v3.
+    #This needs to be taken into consideration when performing the calculations
+
     #X compensation
-    magXcomp = MAGx*math.cos(pitch)-MAGz*math.sin(pitch)
+    if(IMU.BerryIMUversion == 1 or IMU.BerryIMUversion == 3):            #LSM9DS0 and (LSM6DSL & LIS2MDL)
+        magXcomp = MAGx*math.cos(pitch)+MAGz*math.sin(pitch)
+    else:                                                                #LSM9DS1
+        magXcomp = MAGx*math.cos(pitch)-MAGz*math.sin(pitch)
 
     #Y compensation
-                                                          #LSM9DS1
-    magYcomp = MAGx*math.sin(roll)*math.sin(pitch)+MAGy*math.cos(roll)+MAGz*math.sin(roll)*math.cos(pitch)
+    if(IMU.BerryIMUversion == 1 or IMU.BerryIMUversion == 3):            #LSM9DS0 and (LSM6DSL & LIS2MDL)
+        magYcomp = MAGx*math.sin(roll)*math.sin(pitch)+MAGy*math.cos(roll)-MAGz*math.sin(roll)*math.cos(pitch)
+    else:                                                                #LSM9DS1
+        magYcomp = MAGx*math.sin(roll)*math.sin(pitch)+MAGy*math.cos(roll)+MAGz*math.sin(roll)*math.cos(pitch)
 
 
 
@@ -327,4 +402,5 @@ while 1:
     print(outputString)
 
     #slow program down a bit, makes the output more readable
-#    time.sleep(0.03)
+    time.sleep(0.03)
+
