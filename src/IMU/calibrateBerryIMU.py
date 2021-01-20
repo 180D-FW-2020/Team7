@@ -21,7 +21,7 @@ import sys,signal,os
 import time
 import math
 
-import adafruit_lsm9ds1
+import IMU
 import datetime
 
 
@@ -36,8 +36,9 @@ def handle_ctrl_c(signal, frame):
     sys.exit(130) # 130 is standard exit code for ctrl-c
 
 
-i2c = busio.I2C(board.SCL, board.SDA)
-imu = adafruit_lsm9ds1.LSM9DS1_I2C(i2c)
+
+IMU.detectIMU()
+IMU.initIMU()
 
 #This will capture exit when using Ctrl-C
 signal.signal(signal.SIGINT, handle_ctrl_c)
@@ -59,7 +60,9 @@ magZmax = -32767
 while True:
 
     #Read magnetometer values
-    (MAGx, MAGy, MAGz) = imu.magnetic
+    MAGx = IMU.readMAGx()
+    MAGy = IMU.readMAGy()
+    MAGz = IMU.readMAGz()
 
     if MAGx > magXmax:
         magXmax = MAGx
@@ -81,3 +84,5 @@ while True:
 
     #slow program down a bit, makes the output more readable
     time.sleep(0.03)
+
+
