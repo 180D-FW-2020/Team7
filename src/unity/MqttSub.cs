@@ -11,14 +11,19 @@ public class MqttSub : M2MqttUnityClient
 {
     private List<string> eventMessages = new List<string>();
     private string topic = "180d/team7";
-    public string action1; // player one's action
-    public string action2; // player two's action
-    public bool receivedMsg = false;
+
+    public string action1; // player 1's action
+    public string action2; // player 2's action
+    public string action3; // player 3's action
+    public bool receivedMsg1 = false; // message from player 1
+    public bool receivedMsg2 = false; // message from player 2
+    public bool receivedMsg3 = false; // message from player 3
 
     public Pause pauseObject;
 
-    public class PlayerInfo
+    public class PlayersInfo
     {
+        public int playerID;
         public string action;
     }
 
@@ -90,20 +95,33 @@ public class MqttSub : M2MqttUnityClient
 
     protected override void DecodeMessage(string topic, byte[] message)
     {
-        receivedMsg = true;
         string msg = System.Text.Encoding.UTF8.GetString(message);
         //Debug.Log("Received: " + msg);
         StoreMessage(msg);
-        PlayerInfo player1 = JsonConvert.DeserializeObject<PlayerInfo>(msg);
-        action1 = player1.action;
-        if (action1 == "p") // pause/resume
+        PlayersInfo players = JsonConvert.DeserializeObject<PlayersInfo>(msg);
+        if (players.playerID == 1)
+        {
+            receivedMsg1 = true;
+            action1 = players.action;
+        }
+        if (players.playerID == 2)
+        {
+            receivedMsg2 = true;
+            action2 = players.action;
+        }
+        if (players.playerID == 3 && players.action == "p" && !EndGame.gameOver) // pause/resume
         {
             Pause.isPaused = !Pause.isPaused;
             pauseObject.PauseGame();
         }
-        if (action1 == "q")
+        else if (players.playerID == 3 && players.action == "q") // quit
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
+        }
+        else if (players.playerID == 3 && !EndGame.gameOver) // speech from player 3
+        {
+            receivedMsg3 = true;
+            action3 = players.action;
         }
     }
     private void StoreMessage(string eventMsg)
