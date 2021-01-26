@@ -1,7 +1,9 @@
-Gesture recognition -- requires BerryIMU or specific IMU libraries (for Ken).
-Work done by Grace Tang and Ken Suzuki.
+Gesture recognition -- uses moving average filter, runs thresholding based on acceleration in normal vector to fist. Time lockout between punch states. 
 
 ## Dependencies
 ```
-pip3 install adafruit-circuitpython-lsm9ds1
+- smbus  
 ```
+## In the pipeworks
+- Machine learning incorporation to classify moves dynamically.
+- Game integration
