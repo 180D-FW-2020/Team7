@@ -6,6 +6,10 @@ public class CameraRotator : MonoBehaviour
 {
     public float speed;
 
+    void Start()
+    {
+        Time.timeScale = 1; // load menu scene unpaused
+    }
     // Update is called once per frame
     void Update()
     {

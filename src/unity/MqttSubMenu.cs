@@ -13,12 +13,14 @@ public class MqttSubMenu : M2MqttUnityClient
     private string topic = "180d/team7";
     public string action1; // player one's action
     public string action2; // player two's action
-    public bool receivedMsg = false;
+    public bool receivedMsg1 = false; // message from player 1
+    public bool receivedMsg2 = false; // message from player 2
 
     public StartButton startButton;
 
-    public class PlayerInfo
+    public class PlayersInfo
     {
+        public int playerID;
         public string action;
     }
 
@@ -90,13 +92,11 @@ public class MqttSubMenu : M2MqttUnityClient
 
     protected override void DecodeMessage(string topic, byte[] message)
     {
-        receivedMsg = true;
         string msg = System.Text.Encoding.UTF8.GetString(message);
         //Debug.Log("Received: " + msg);
         StoreMessage(msg);
-        PlayerInfo player1 = JsonConvert.DeserializeObject<PlayerInfo>(msg);
-        action1 = player1.action;
-        if (action1 == "g")
+        PlayersInfo players = JsonConvert.DeserializeObject<PlayersInfo>(msg);
+        if (players.playerID == 3 && players.action == "g")
         {
             startButton.StartGame();
         }

@@ -6,52 +6,55 @@ public class AnimationStateController : MonoBehaviour
 {
     Animator anim;
     public string action = "";
+
     public GameObject mqttObject;
     MqttSub playerMqtt;
+    public int playerID;
+
+    public GameObject otherPlayer;
+    Animator other;
 
     bool doBoxing;
     bool doHookPunch;
     bool doCrossPunch;
     bool doBlock;
-    bool doReceiveUppercut;
-    bool doTakePunch;
-    bool doReceiveStomach;
+    //bool doReceiveUppercut;
+    //bool doTakePunch;
+    //bool doReceiveStomach;
 
     // Start is called before the first frame update
     void Start()
     {
         anim = GetComponent<Animator>();
         playerMqtt = mqttObject.GetComponent<MqttSub>();
+        other = otherPlayer.GetComponent<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        // block new animation if game over
+        if (EndGame.gameOver)
+            return;
+
         // update if new mqtt message and game is not paused
-        if (playerMqtt.receivedMsg && !Pause.isPaused)
+        if (playerID == 1 && playerMqtt.receivedMsg1 && !Pause.isPaused)
         {
             action = playerMqtt.action1;
-            //Debug.Log("Action: " + action);
-            playerMqtt.receivedMsg = false;
+            playerMqtt.receivedMsg1 = false;
+            Debug.Log("Player: " + playerID + " Action: " + action);
 
-            switch (action)
-            {
-                case "b":
-                    doBoxing = true; break;
-                case "h":
-                    doHookPunch = true; break;
-                case "c":
-                    doCrossPunch = true; break;
-                case "o":
-                    doBlock = true; break;
-                case "u":
-                    doReceiveUppercut = true; break;
-                case "t":
-                    doTakePunch = true; break;
-                case "s":
-                    doReceiveStomach = true; break;
-            }
-        }               
+            SetAnimationState(action);
+        }
+
+        if (playerID == 2 && playerMqtt.receivedMsg2 && !Pause.isPaused)
+        {
+            action = playerMqtt.action2;
+            playerMqtt.receivedMsg2 = false;
+            Debug.Log("Player: " + playerID + " Action: " + action);
+
+            SetAnimationState(action);
+        }
 
         bool isBoxing = anim.GetBool("isBoxing");
         bool isHookPunch = anim.GetBool("isHookPunch");
@@ -71,6 +74,10 @@ public class AnimationStateController : MonoBehaviour
 
         // bool isKnockedOut = anim.GetBool("isKnockedOut"); // not used
         // bool knockOutPressed = Input.GetKey("k"); // not used
+
+        bool isOtherBoxing = other.GetBool("isBoxing");
+        bool isOtherHookPunch = other.GetBool("isHookPunch");
+        bool isOtherCrossPunch = other.GetBool("isCrossPunch");
 
         AnimatorStateInfo animatorStateInfo = anim.GetCurrentAnimatorStateInfo(0);
 
@@ -135,55 +142,84 @@ public class AnimationStateController : MonoBehaviour
         }
 
         // take hits
-        if (!isReceiveUppercut && doReceiveUppercut)
+        //if (!isReceiveUppercut && doReceiveUppercut)
+        //{
+        //    anim.SetBool("isReceiveUppercut", true);
+        //    receivedPunch++;
+        //    anim.SetInteger("receivedPunch", receivedPunch);
+        //    doReceiveUppercut = false;
+        //}
+        //if (isReceiveUppercut && !doReceiveUppercut)
+        //{
+        //    anim.SetBool("isReceiveUppercut", false);
+        //}
+        if (!isTakingPunch && !doBlock && !isBlock && (isOtherCrossPunch || isOtherHookPunch) )
         {
-            anim.SetBool("isReceiveUppercut", true);
+            //anim.SetBool("isTakingPunch", true);
+            StartCoroutine(DelayTakePunch());
+            //doReceiveUppercut = false;
             receivedPunch++;
             anim.SetInteger("receivedPunch", receivedPunch);
-            doReceiveUppercut = false;
+            //doTakePunch = false;
         }
-        if (isReceiveUppercut && !doReceiveUppercut)
-        {
-            anim.SetBool("isReceiveUppercut", false);
-        }
-        if (!isTakingPunch && doTakePunch)
-        {
-            anim.SetBool("isTakingPunch", true);
-            receivedPunch++;
-            anim.SetInteger("receivedPunch", receivedPunch);
-            doTakePunch = false;
-        }
-        if (isTakingPunch && !doTakePunch)
+        if (isTakingPunch /*&& !doTakePunch*/)
         {
             anim.SetBool("isTakingPunch", false);
         }
-        if (!isReceiveStomach && doReceiveStomach)
+        if (!isReceiveStomach && !doBlock && !isBlock && isOtherBoxing)
         {
-            anim.SetBool("isReceiveStomach", true);
+            //anim.SetBool("isReceiveStomach", true);
+            anim.Play("Receive Stomach Uppercut", 0, 0f);
             receivedPunch++;
             anim.SetInteger("receivedPunch", receivedPunch);
-            doReceiveStomach = false;
+            //doReceiveStomach = false;
         }
-        if (isReceiveStomach && !doReceiveStomach)
+        if (isReceiveStomach /*&& !doReceiveStomach*/)
         {
             anim.SetBool("isReceiveStomach", false);
         }
 
         // keep taking hits
-        if (animatorStateInfo.IsName("Receive Uppercut") && doReceiveUppercut)
+        //if (animatorStateInfo.IsName("Receive Uppercut") && doReceiveUppercut)
+        //{
+        //    anim.Play("Receive Uppercut", 0, 0.1f);
+        //    doReceiveUppercut = false;
+        //}
+        //if (animatorStateInfo.IsName("Taking Punch") && doTakePunch)
+        //{
+        //    anim.Play("Taking Punch", 0, 0.05f);
+        //    doTakePunch = false;
+        //}
+        //if (animatorStateInfo.IsName("Receive Stomach Uppercut") && doReceiveStomach)
+        //{
+        //    anim.Play("Receive Stomach Uppercut", 0, 0.1f);
+        //    doReceiveStomach = false;
+        //}
+    }
+
+    void SetAnimationState(string action)
+    {
+        switch (action)
         {
-            anim.Play("Receive Uppercut", 0, 0.1f);
-            doReceiveUppercut = false;
+            case "b":
+                doBoxing = true; break;
+            case "h":
+                doHookPunch = true; break;
+            case "c":
+                doCrossPunch = true; break;
+            case "o":
+                doBlock = true; break;
+            //case "u":
+            //    doReceiveUppercut = true; break;
+            //case "t":
+            //    doTakePunch = true; break;
+            //case "s":
+            //    doReceiveStomach = true; break;
         }
-        if (animatorStateInfo.IsName("Taking Punch") && doTakePunch)
-        {
-            anim.Play("Taking Punch", 0, 0.05f);
-            doTakePunch = false;
-        }
-        if (animatorStateInfo.IsName("Receive Stomach Uppercut") && doReceiveStomach)
-        {
-            anim.Play("Receive Stomach Uppercut", 0, 0.1f);
-            doReceiveStomach = false;
-        }
+    }
+    IEnumerator DelayTakePunch()
+    {
+        yield return new WaitForSeconds(0.2f);
+        anim.Play("Taking Punch", 0, 0f);
     }
 }

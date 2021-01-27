@@ -7,6 +7,7 @@ port = 1883
 topic = "180d/team7"
 client_id = f'python-mqtt-{random.randint(0, 1000)}'
 
+playerID = 1
 
 def connect_mqtt():
     def on_connect(client, userdata, flags, rc):
@@ -24,25 +25,27 @@ def publish(client, action):
      while True:
          time.sleep(1)
          '''
-         "b" - Boxing
-         "h" - Hook Punch
-         "c" - Cross Punch
-         "o" - Body Block
-         "u" - Receive Uppercut
-         "t" - Taking Punch
-         "s" - Receive Stomach Uppercut
-         "p" - pause/resume game (in boxing scene)
-         "g" - start game (in menu scene)
+         only boxers:
+             "b" - Boxing
+             "h" - Hook Punch
+             "c" - Cross Punch
+             "o" - Body Block
+         only player 3:
+             "p" - pause/resume game (in boxing scene)
+             "q" - quit (in boxing scene)
+             "g" - start game (in menu scene)
+             arbitrary string from speech (in boxing scene)
          all else ignored
          '''
-         action = input("press key: ")
-         msg = {"player" : "player1", "action" : action}
+         action = input("enter command: ")
+         msg = {"playerID" : playerID, "action" : action}
          msg = json.dumps(msg)
          result = client.publish(topic, msg)
          # result: [0, 1]
          status = result[0]
          if status == 0:
              print(f"Send `{msg}` to topic `{topic}`")
+
          else:
              print(f"Failed to send message to topic {topic}")
 
