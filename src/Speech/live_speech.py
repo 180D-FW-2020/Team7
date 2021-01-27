@@ -61,39 +61,50 @@ def run():
 import speech_recognition as sr
 r=sr.Recognizer()
 
+# contains trains of r/p, used to keep track of current status of either resumed or paused
+previousIs = "r" 
+
 while(True):
-	text = ""
-	action = ''
-	print("Please Talk!")
-	with sr.Microphone() as source:
-		spoken = True
-		canPublish = False
-		audio_data=r.record(source, duration=3)
-		print("Recognizing...")
+    text = ""
+    action = ''
+    print("Please Talk!")
+    with sr.Microphone() as source:
+        spoken = True
+        canPublish = False
+        audio_data=r.record(source, duration=3)
+        print("Recognizing...")
+        try:
+            text=r.recognize_google(audio_data)
+        except:
+            spoken = False
+            print("waiting for next comand...")
 
-		try:
-			text=r.recognize_google(audio_data)
-		except:
-			spoken = False
-			print("waiting for next comand...")
+        if(spoken):
+            print("You said: {}".format(text))
 
-		if(spoken):
-			print("You said: {}".format(text))
+        # find if certain words exist within said phrase
+        if(text.find("begin") != -1 or text.find("start") != -1):
+            canPublish = True
+            action = 'g'
+            print("The game will start!")
+        elif(text.find("pause") != -1):
+            if(previousIs[len(previousIs) - 1] == 'r'):
+                canPublish = True
+                action = 'p'
+                previousIs += 'p'
+                print("Paused")
 
-		# find if certain words exist within said phrase
-		if(text.find("begin") != -1 or text.find("start") != -1):
-			canPublish = True
-			action = 'g'
-			print("The game will start!")
-		elif(text.find("resume") != -1 or text.find("pause") != -1):
-			canPublish = True
-			action = 'p'
-			print("Paused/Resumed")
-		elif(text.find("quit") != -1):
-			canPublish = True
-			action = 'q'
-			print("Game quitted")
-		
-		if(canPublish):
-				if __name__ == '__main__':
-					run()
+        elif(text.find("resume") != -1):
+            if(previousIs[len(previousIs) - 1] == 'p'):
+                canPublish = True
+                action = 'p'
+                previousIs += 'r'
+                print("Resumed")
+        elif(text.find("quit") != -1):
+            canPublish = True
+            action = 'q'
+            print("Game quitted")
+
+        if(canPublish):
+            if __name__ == '__main__':
+                run()
