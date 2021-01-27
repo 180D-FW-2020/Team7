@@ -1,3 +1,12 @@
+'''
+NOTE: This code is deprecated. Similar processes are used in the updated code in file berryIMU.py
+This code was based on Adafruit libraries 
+(found somewhat better processing speed due to binary unpacking of registers rather than through Smbus reading register)
+Unfortunately I'm not going to write the entire code to work with separate libraries so we'll go with the Ozzmaker ones.
+'''
+
+
+
 import board
 import busio
 import adafruit_lsm9ds1
