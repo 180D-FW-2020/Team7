@@ -10,14 +10,12 @@ import logging
 import time
 import matplotlib.pyplot as plt
 import numpy as np
-import paho.mqtt.client as mqtt
 import time
 
 
 fps_time = 0
 debug = False
 use_video = False
-use_mqtt = False
 w =480
 h = 480
 RESIZE_OUT_RATIO = 2.0
@@ -32,20 +30,21 @@ def str2bool(v):
     return v.lower() in ("yes", "true", "t", "1")
 
 
+
 if __name__ == '__main__':
+
     parser = argparse.ArgumentParser(description='realtime broadcasting webcam')
     parser.add_argument('--input', default='camera')
     parser.add_argument('--video', type=str, default='')
     parser.add_argument('--debug', default='false');
-    parser.add_argument('--mqtt', type=str, default='')
     parser.add_argument('--player', type=int, default=-1);
+
     args = parser.parse_args()
+
     if(args.input.lower() == "video"):
         use_video = True
     if(args.debug.lower() == "true"):
         debug = True
-    if(args.mqtt.lower() != ''):
-        mqtt_channel = args.mqtt.lower()
     if not (args.player == 1 or args.player == 2):
         print("Please input \"--player 1\" OR \"--player 2");
         exit();
@@ -67,9 +66,15 @@ if __name__ == '__main__':
         ok, frame = device.read()
         frame = cv2.resize(frame,(480,480));
         #frame = cv2.resize(frame, (0,0), fx = 0.5, fy = 0.5)
-
         data = pickle.dumps(frame)
-        client_socket.sendall(struct.pack("L", len(data)) + data)
+        synth = str(len(data)) + str(args.player);
+        print(str(len(data)))
+        print(synth)
+
+        int_synth = int(synth)
+        print(int_synth)
+        #client_socket.sendall(struct.pack("L", len(data), args.player) + data)
+        client_socket.sendall(struct.pack("L", int_synth) + data)
         now = datetime.now()
         current_time = now.strftime("%M:%S")
         print(current_time);
