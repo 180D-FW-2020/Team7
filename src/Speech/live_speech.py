@@ -42,7 +42,7 @@ def publish(client, action):
          all else ignored
          '''
          #action = input("press key: ")
-         msg = {"player" : "player1", "action" : action}
+         msg = {"player" : 3, "action" : action}
          msg = json.dumps(msg)
          result = client.publish(topic, msg)
          # result: [0, 1]
