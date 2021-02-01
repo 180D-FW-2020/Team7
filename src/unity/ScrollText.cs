@@ -10,8 +10,7 @@ public class ScrollText : MonoBehaviour
     RectTransform m_RectTransform;
     float m_XAxis, m_YAxis;
     public float speed;
-    public Camera cam;
-
+   
     public GameObject mqttObject;
     MqttSub playerMqtt;
 
@@ -21,10 +20,7 @@ public class ScrollText : MonoBehaviour
         playerMqtt = mqttObject.GetComponent<MqttSub>();
 
         m_RectTransform = playerText.GetComponent<RectTransform>();
-        cam = Camera.main; //GetComponent<Camera>();
-        cam.enabled = true;
-
-        speed = 2.5f;
+        speed = 3f;
     }
 
     // Update is called once per frame
@@ -46,7 +42,7 @@ public class ScrollText : MonoBehaviour
         }
 
         // if text is still on screen, move
-        if (IsOnScreen(m_RectTransform,cam) && playerText.text != "")
+        if (IsOnScreen(m_RectTransform) && playerText.text != "")
         {
             if (!Pause.isPaused)
                 m_XAxis -= speed; // only move text if not paused
@@ -54,16 +50,16 @@ public class ScrollText : MonoBehaviour
         }
     }
 
-    bool IsOnScreen(RectTransform rt, Camera cam)
+    bool IsOnScreen(RectTransform rt)
     {
         Rect screenRect = new Rect(0f, 0f, Screen.width, Screen.height);
         Vector3[] objectCorners = new Vector3[4];
         rt.GetWorldCorners(objectCorners);
         int visibleCorners = 0;
-        Vector3 screenSpaceCorner;
+        //Vector3 screenSpaceCorner;
         foreach (Vector3 corner in objectCorners)
         {
-            screenSpaceCorner = cam.WorldToScreenPoint(corner);
+            //screenSpaceCorner = cam.WorldToScreenPoint(corner);
             if (screenRect.Contains(corner))
             {
                 visibleCorners++;

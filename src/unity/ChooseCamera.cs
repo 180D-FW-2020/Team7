@@ -1,15 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
 
 public class ChooseCamera : MonoBehaviour
 {
     // singleton
     public static ChooseCamera camChoice;
-
     public int playerID;
-    //public TMP_Dropdown dropdown;
 
     private void Awake()
     {
