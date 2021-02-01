@@ -1,5 +1,5 @@
-#!/home/omar/.conda/envs/ece180da/bin/python3.
-#####Necessary Includes
+##Necessary Includes
+#!/usr/bin/python3
 import json
 import argparse
 import logging
@@ -9,6 +9,7 @@ import cv2
 import numpy as np
 import paho.mqtt.client as mqtt
 import time
+import tensorflow as tf
 from tf_pose.estimator import TfPoseEstimator
 from tf_pose.networks import get_graph_path, model_wh
 import move_classification as fight
@@ -74,7 +75,7 @@ if __name__ == '__main__':
         client.connect_async('broker.emqx.io')
         client.loop_start()
     logger.debug('initialization %s : %s' % ('mobilenet_thin', get_graph_path('mobilenet_thin')))
-    e = TfPoseEstimator(get_graph_path('mobilenet_v2_small'), target_size=(w, h), trt_bool=str2bool("False"))
+    e = TfPoseEstimator(get_graph_path('cmu'), target_size=(w, h), trt_bool=str2bool("False"), tf_config=tf.ConfigProto(log_device_placement=True))
     #Allows us to either use video or camera as input(When finite video wil lnot exit cleanly)
     if use_video:
         cam = cv2.VideoCapture(args.video)
@@ -126,7 +127,11 @@ if __name__ == '__main__':
                         (0, 255, 0), 2);
 
             cv2.imshow('tf-pose-estimation result VIDEO/WEBCAM', image)
+        print("FPS: %f" % (1.0 / (time.time() - fps_time)))
+        #sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
+        #print(sess);
         fps_time = time.time()
+        
         if cv2.waitKey(1) == 27:
             break
         logger.debug('finished+')

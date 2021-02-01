@@ -120,6 +120,14 @@ if __name__ == '__main__':
         #cv2.waitKey(1)
         opWrapper.emplaceAndPop(op.VectorDatum([datum]))
         print("Body keypoints: \n" + str(datum.poseKeypoints))
+        # print(datum.cvOutputData)
+        # poseModel = op.PoseModel.BODY_25
+        # print(op.getPoseBodyPartMapping(poseModel))
+        # print(op.getPoseNumberBodyParts(poseModel))
+        # print(op.getPosePartPairs(poseModel))
+        #print(op.getPoseMapIndex(poseModel))
+
+
         #####MQTT SEND IT#######
         message = json.dumps({"player": player, "action": "o"})
         client.publish(mqtt_channel, message, qos = 1)
