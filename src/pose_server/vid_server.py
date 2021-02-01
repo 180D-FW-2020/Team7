@@ -127,7 +127,7 @@ if __name__ == '__main__':
         # print(op.getPosePartPairs(poseModel))
         #print(op.getPoseMapIndex(poseModel))
 
-
+        
         #####MQTT SEND IT#######
         message = json.dumps({"player": player, "action": "o"})
         client.publish(mqtt_channel, message, qos = 1)
@@ -140,6 +140,7 @@ if __name__ == '__main__':
             cv2.imshow('tf-pose-estimation result VIDEO/WEBCAM',datum.cvOutputData)
             #cv2.imshow("OpenPose 1.7.0 - Tutorial Python API", datum.cvOutputData)
         fps_time = time.time()
+        print("FPS: %f" % (1.0 / (time.time() - fps_time)));
         if cv2.waitKey(1) == 27:
             break
 
