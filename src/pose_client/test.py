@@ -128,6 +128,7 @@ if __name__ == '__main__':
 
             cv2.imshow('tf-pose-estimation result VIDEO/WEBCAM', image)
         fps_time = time.time()
+
         if cv2.waitKey(1) == 27:
             break
         logger.debug('finished+')
