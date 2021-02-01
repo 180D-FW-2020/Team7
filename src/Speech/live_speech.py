@@ -42,7 +42,7 @@ def publish(client, action):
          all else ignored
          '''
          #action = input("press key: ")
-         msg = {"player" : "player1", "action" : action}
+         msg = {"playerID" : 3, "action" : action}
          msg = json.dumps(msg)
          result = client.publish(topic, msg)
          # result: [0, 1]
@@ -81,30 +81,29 @@ while(True):
 
         if(spoken):
             print("You said: {}".format(text))
-
-        # find if certain words exist within said phrase
-        if(text.find("begin") != -1 or text.find("start") != -1):
-            canPublish = True
-            action = 'g'
-            print("The game will start!")
-        elif(text.find("pause") != -1):
-            if(previousIs[len(previousIs) - 1] == 'r'):
+            # find if certain words exist within said phrase
+            if(text.find("begin") != -1 or text.find("start") != -1):
                 canPublish = True
-                action = 'p'
-                previousIs += 'p'
-                print("Paused")
+                action = 'g'
+                print("The game will start!")
+            elif(text.find("pause") != -1):
+                if(previousIs[len(previousIs) - 1] == 'r'):
+                    canPublish = True
+                    action = 'p'
+                    previousIs += 'p'
+                    print("Paused")
 
-        elif(text.find("resume") != -1):
-            if(previousIs[len(previousIs) - 1] == 'p'):
+            elif(text.find("resume") != -1):
+                if(previousIs[len(previousIs) - 1] == 'p'):
+                    canPublish = True
+                    action = 'p'
+                    previousIs += 'r'
+                    print("Resumed")
+            elif(text.find("quit") != -1):
                 canPublish = True
-                action = 'p'
-                previousIs += 'r'
-                print("Resumed")
-        elif(text.find("quit") != -1):
-            canPublish = True
-            action = 'q'
-            print("Game quitted")
+                action = 'q'
+                print("Game quitted")
 
-        if(canPublish):
-            if __name__ == '__main__':
-                run()
+            if(canPublish):
+                if __name__ == '__main__':
+                    run()
