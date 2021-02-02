@@ -1,13 +1,7 @@
 #!/usr/bin/python3
 ######################DOOOO NOTTTTTT TOUUCHHHHHHHH #########################
-<<<<<<< HEAD
 import threading
 =======
-<<<<<<< HEAD
-import threading
-=======
->>>>>>> d4d4049057f4be3683c33affad7317b130bfa763
->>>>>>> 9f4658fdfbfa65f886b248363ae87b6e10f654ce
 import socket
 import cv2
 import numpy as np
@@ -25,10 +19,6 @@ import logging
 import matplotlib.pyplot as plt
 import numpy as np
 import paho.mqtt.client as mqtt
-<<<<<<< HEAD
-from funcs import *
-=======
-<<<<<<< HEAD
 from funcs import *
 sys.path.append('/usr/local/python');
 from openpose import pyopenpose as op
@@ -38,29 +28,21 @@ LOAD_SIZE=691373
 #####OpenPose inits, I'd rather see if something goes wrong with this
 =======
 
->>>>>>> 9f4658fdfbfa65f886b248363ae87b6e10f654ce
 sys.path.append('/usr/local/python');
 from openpose import pyopenpose as op
+#import pyopenpose as op
 LOAD_SIZE=691373
-
 ######################DOOOO NOTTTTTT TOUUCHHHHHHHH #########################
 #####OpenPose inits, I'd rather see if something goes wrong with this
-<<<<<<< HEAD
-=======
 debug = False
 use_mqtt = False
 >>>>>>> d4d4049057f4be3683c33affad7317b130bfa763
->>>>>>> 9f4658fdfbfa65f886b248363ae87b6e10f654ce
 params = dict()
 params["model_folder"] = "/home/omar/openpose/models/"
 params["net_resolution"] = "240x240" #if you have a nice computer you can bump this number up
 opWrapper = op.WrapperPython()
 opWrapper.configure(params)
 opWrapper.start()
-<<<<<<< HEAD
-host = '192.168.1.4'  #NO ONE CHANGE THIS
-port = 5001   #OR THIS
-=======
 <<<<<<< HEAD
 host = '192.168.1.4'  #NO ONE CHANGE THIS
 port = 5001   #OR THIS
@@ -76,29 +58,40 @@ if __name__ == '__main__':
 =======
 host = '192.168.1.4'  #ken, you're allowed to change this, maybe
 port = 5001
->>>>>>> 9f4658fdfbfa65f886b248363ae87b6e10f654ce
 client_socket = None
 #binds to socket, ONLY Ken Suzuki's computer
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_socket.bind((host, port))
+server_socket.listen(5)
+conn, addr = server_socket.accept()
+data = b''
+payload_size = struct.calcsize("L")
+
+######MQTT functions##########
+def str2bool(v):
+    return v.lower() in ("yes", "true", "t", "1")
+def get_mqtt_header():
+    return time.strftime("H%H-M%M-S%S", time.localtime()) + ":::";
+def on_connect(client, userdata, flags, rc):
+    print("Connection Returned result: " + str(rc))
+def on_disconnect(client, userdata, rc):
+    if rc != 0:
+        print("Unexpected Disconnect");
+    else:
+        print("Expected Disconnect");
+def on_message(client, userdata, message):
+    #We should use this for start game and end game and all that, ####REMMEBER THIS LATER
+    print("#######Received Message###########");
+    print(str(message.payload))
 
 if __name__ == '__main__':
-<<<<<<< HEAD
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1);
-    server_socket.bind((host, port))
-
-
-=======
 >>>>>>> d4d4049057f4be3683c33affad7317b130bfa763
->>>>>>> 9f4658fdfbfa65f886b248363ae87b6e10f654ce
     parser = argparse.ArgumentParser(description='tf-pose-estimation realtime webcam')
     parser.add_argument('--debug', default='false');
     parser.add_argument('--mqtt', type=str, default='')
     args = parser.parse_args()
 <<<<<<< HEAD
     debug = False;
-=======
-<<<<<<< HEAD
-    debug = False;
     if(args.debug.lower() == "true"):
         debug = True
     if(args.mqtt.lower() != ''):
@@ -116,25 +109,27 @@ if __name__ == '__main__':
                          
         
 =======
->>>>>>> 9f4658fdfbfa65f886b248363ae87b6e10f654ce
     if(args.debug.lower() == "true"):
         debug = True
     if(args.mqtt.lower() != ''):
+        use_mqtt = True
         mqtt_channel = args.mqtt.lower()
     else:
         print("NEED MQTT \"--mqtt *channel*\"");
-        exit();
-    client = create_mqtt_channel(mqtt_channel);
-    server_socket.listen(5)    
+
+    if use_mqtt:
+        #Enabling MQTT, eclipise will be the constant server
+        client = mqtt.Client()
+        client.on_connect = on_connect
+        client.on_disconnect = on_disconnect
+        client.on_message = on_message
+        client.connect_async('broker.emqx.io')
+        client.loop_start()
+        message = "BROADCAST TEST"
+        client.publish(mqtt_channel, message, qos = 1)
+
+    
     while True:
-<<<<<<< HEAD
-        conn, addr = server_socket.accept()
-        conn.settimeout(5)#move this arround if you want, but 5 is good
-        #player_thread(conn, opWrapper, client, mqtt_channel, debug);
-        threading.Thread(target = player_thread,args = (conn, opWrapper, client, mqtt_channel, debug, addr)).start();
-                         
-        
-=======
         while len(data) < payload_size:
             #data += conn.recv(90456)
             data += conn.recv(4096)
@@ -185,4 +180,3 @@ if __name__ == '__main__':
             break
 
 >>>>>>> d4d4049057f4be3683c33affad7317b130bfa763
->>>>>>> 9f4658fdfbfa65f886b248363ae87b6e10f654ce
