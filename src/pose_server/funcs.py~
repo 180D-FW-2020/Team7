@@ -1,0 +1,30 @@
+import paho.mqtt.client as mqtt
+import json
+######MQTT functions##########
+def str2bool(v):
+    return v.lower() in ("yes", "true", "t", "1")
+def get_mqtt_header():
+    return time.strftime("H%H-M%M-S%S", time.localtime()) + ":::";
+def on_connect(client, userdata, flags, rc):
+    print("Connection Returned result: " + str(rc))
+def on_disconnect(client, userdata, rc):
+    if rc != 0:
+        print("Unexpected Disconnect");
+    else:
+        print("Expected Disconnect");
+def on_message(client, userdata, message):
+    #We should use this for start game and end game and all that, ####REMMEBER THIS LATER
+    print("#######Received Message###########");
+    print(str(message.payload))
+
+def create_mqtt_channel(mqtt_channel):
+    client = mqtt.Client()
+    client.on_connect = on_connect
+    client.on_disconnect = on_disconnect
+    client.on_message = on_message
+    client.connect_async('broker.emqx.io')
+    client.loop_start()
+    message = "BROADCAST TEST"
+    client.publish(mqtt_channel, message, qos = 1)
+    return client;
+##########################Openpose functions#########################
