@@ -1,15 +1,5 @@
-<<<<<<< HEAD
 ##Necessary Includes
 #!/usr/bin/python3
-=======
-<<<<<<< HEAD
-##Necessary Includes
-#!/usr/bin/python3
-=======
-#!/home/omar/.conda/envs/ece180da/bin/python3.
-#####Necessary Includes
->>>>>>> d4d4049057f4be3683c33affad7317b130bfa763
->>>>>>> 9f4658fdfbfa65f886b248363ae87b6e10f654ce
 import json
 import argparse
 import logging
@@ -19,14 +9,7 @@ import cv2
 import numpy as np
 import paho.mqtt.client as mqtt
 import time
-<<<<<<< HEAD
 import tensorflow as tf
-=======
-<<<<<<< HEAD
-import tensorflow as tf
-=======
->>>>>>> d4d4049057f4be3683c33affad7317b130bfa763
->>>>>>> 9f4658fdfbfa65f886b248363ae87b6e10f654ce
 from tf_pose.estimator import TfPoseEstimator
 from tf_pose.networks import get_graph_path, model_wh
 import move_classification as fight
@@ -92,15 +75,7 @@ if __name__ == '__main__':
         client.connect_async('broker.emqx.io')
         client.loop_start()
     logger.debug('initialization %s : %s' % ('mobilenet_thin', get_graph_path('mobilenet_thin')))
-<<<<<<< HEAD
     e = TfPoseEstimator(get_graph_path('cmu'), target_size=(w, h), trt_bool=str2bool("False"), tf_config=tf.ConfigProto(log_device_placement=True))
-=======
-<<<<<<< HEAD
-    e = TfPoseEstimator(get_graph_path('cmu'), target_size=(w, h), trt_bool=str2bool("False"), tf_config=tf.ConfigProto(log_device_placement=True))
-=======
-    e = TfPoseEstimator(get_graph_path('mobilenet_v2_small'), target_size=(w, h), trt_bool=str2bool("False"))
->>>>>>> d4d4049057f4be3683c33affad7317b130bfa763
->>>>>>> 9f4658fdfbfa65f886b248363ae87b6e10f654ce
     #Allows us to either use video or camera as input(When finite video wil lnot exit cleanly)
     if use_video:
         cam = cv2.VideoCapture(args.video)
@@ -152,21 +127,11 @@ if __name__ == '__main__':
                         (0, 255, 0), 2);
 
             cv2.imshow('tf-pose-estimation result VIDEO/WEBCAM', image)
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 9f4658fdfbfa65f886b248363ae87b6e10f654ce
         print("FPS: %f" % (1.0 / (time.time() - fps_time)))
         #sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
         #print(sess);
         fps_time = time.time()
         
-<<<<<<< HEAD
-=======
-=======
-        fps_time = time.time()
->>>>>>> d4d4049057f4be3683c33affad7317b130bfa763
->>>>>>> 9f4658fdfbfa65f886b248363ae87b6e10f654ce
         if cv2.waitKey(1) == 27:
             break
         logger.debug('finished+')
