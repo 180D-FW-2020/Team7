@@ -89,11 +89,10 @@ if __name__ == '__main__':
             current_time = now.strftime("%M:%S")
             print(current_time);
             print("Current frame:" + str(frame_num));
-            object = cv2();
             if(signal_catch == True):
                 exit(0);
             if debug:
-                object.putText(frame,
+                cv2.putText(frame,
                             "FPS: %f" % (1.0 / (time.time() - fps_time)),
                             (10, 10),  cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                             (0, 255, 0), 2);
