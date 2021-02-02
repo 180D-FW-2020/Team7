@@ -28,6 +28,7 @@ LOAD_SIZE=691373
 params = dict()
 params["model_folder"] = "/home/omar/openpose/models/"
 params["net_resolution"] = "240x240" #if you have a nice computer you can bump this number up
+params["number_people_max"] = "1"
 opWrapper = op.WrapperPython()
 opWrapper.configure(params)
 opWrapper.start()

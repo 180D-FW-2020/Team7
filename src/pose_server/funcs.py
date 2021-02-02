@@ -20,6 +20,7 @@ import paho.mqtt.client as mqtt
 from funcs import *
 sys.path.append('/usr/local/python');
 from openpose import pyopenpose as op
+from move_classification import *
 LOAD_SIZE=691373
 ######MQTT functions##########
 def str2bool(v):
@@ -80,10 +81,17 @@ def player_thread(client, opWrapper, mqtt_client, mqtt_channel, debug, addr):
         datum = op.Datum()
         datum.cvInputData = frame#imageToProcess
         print ("\tpost process " + current_time + " -- "+ str(frame.size))
-        opWrapper.emplaceAndPop(op.VectorDatum([datum]))
-    
+        stats = opWrapper.emplaceAndPop(op.VectorDatum([datum]))
+        print(str(stats));
+        poseModel = op.PoseModel.BODY_25
+        #print(op.getPoseBodyPartMapping(poseModel))
+        #print("Body keypoints: \n" + str(datum.poseKeypoints))
+        movement = move(datum.poseKeypoints);
         #####MQTT SEND IT#######
-        message = json.dumps({"player": player, "action": "o"})
+        if movement == "blocking":
+            message = json.dumps({"player": player, "action": "o"})
+        else:
+            message = json.dumps({"player": player, "action": "x"})
         mqtt_client.publish(mqtt_channel, message, qos = 1)
         if debug:
             cv2.putText(datum.cvOutputData,

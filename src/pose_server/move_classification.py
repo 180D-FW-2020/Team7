@@ -7,13 +7,7 @@ import numpy as np
 import slidingwindow as sw
 import tensorflow as tf
 import time
-from tf_pose import common
-from tf_pose.common import CocoPart
-from tf_pose.common import CocoPart as body_parts
-from tf_pose.tensblur.smoother import Smoother
-import tensorflow.contrib.tensorrt as trt
-from tf_pose.estimator import TfPoseEstimator
-from tf_pose.networks import get_graph_path, model_wh
+
 
 #preset constants, DO NOT CHANGE
 Nose = 0
@@ -24,41 +18,59 @@ RWrist = 4
 LShoulder = 5
 LElbow = 6
 LWrist = 7
-RHip = 8
-RKnee = 9
-RAnkle = 10
-LHip = 11
-LKnee = 12
-LAnkle = 13
-REye = 14
-LEye = 15
-REar = 16
-LEar = 17
-Background = 18
-##############################Coordinate Debugging###############
-#Used for debugging coordinates and stuff of the like
-def print_humans_info(humans):
-        for human in humans:
-            if human.part_count() > 14:# have only complete figures or near complete figures
-                print("For Human: ")
-                for i in range(common.CocoPart.Background.value):
-                    if i not in human.body_parts.keys():
-                        continue
-                    body_part = human.body_parts[i]
-                    print("\t" + str(body_part.get_part_name()) + "::" + str(body_part.part_idx) + "::" + " ----X: " + str(body_part.x) + " Y: " + str(body_part.y))
-def print_arms_blocking_head(human):
-        print("Left Wrist: (" + str(human.body_parts[LWrist].y) + "," + str(human.body_parts[LWrist].x) + ")")
-        print("Rigt Wrist: (" + str(human.body_parts[RWrist].y) + "," + str(human.body_parts[RWrist].x) + ")")
-        print("Left Elbow: (" + str(human.body_parts[LElbow].y) + "," + str(human.body_parts[LElbow].x) + ")")
-        print("Right Elbow: (" + str(human.body_parts[RElbow].y) + "," + str(human.body_parts[RElbow].x) + ")")
-        print("Nose: (" + str(human.body_parts[Nose].y) + "," + str(human.body_parts[Nose].x) + ")")
+Waist = 8
+RHip = 9
+RKnee = 10
+RAnkle = 11
+LHip = 12
+LKnee = 13
+LAnkle = 14
+REye = 15
+LEye = 16
+REar = 17
+LEar = 18
 
-def parse_humans(humans):
-    if len(humans) > 1:
-        print("Humans are multiple")
-    elif len(humans) == 1:
-        print("Human is one")
-    return len(humans)
+
+##############################Coordinate Debugging###############
+class body_part:
+        def __init__(self, x, y):
+                self.x = x;
+                self.y = y;
+class person:
+        def __init__(self, humans_num):
+                self.body_parts = []
+                for i in humans_num:
+                        x = i[0];
+                        y = i[1];
+                        #print("coordinates X: " + str(i[0]) + " Y:" + str(i[0]));
+                        tmp_body_part = body_part(x,y);
+                        self.body_parts.append(tmp_body_part);
+                #print("Size of human ppl " + str(len(body_parts)));
+        
+                
+
+def move(human_arr):
+        human_count = len(human_arr);
+        #print("human number is " + str(human_count));
+        human_nums = human_arr[0];
+        #print(human_nums);
+        human = person(human_nums);
+        print_arms_blocking_head(human);
+        if are_arms_blocking_head(human):
+                return "blocking";
+        else:
+                return "nothing";
+
+#Used for debugging coordinates and stuff of the like
+
+def print_arms_blocking_head(human):
+        print("Left Wrist: (" + str(human.body_parts[LWrist].x) + "," + str(human.body_parts[LWrist].y) + ")")
+        print("Rigt Wrist: (" + str(human.body_parts[RWrist].x) + "," + str(human.body_parts[RWrist].y) + ")")
+        print("Left Elbow: (" + str(human.body_parts[LElbow].x) + "," + str(human.body_parts[LElbow].y) + ")")
+        print("Right Elbow: (" + str(human.body_parts[RElbow].x) + "," + str(human.body_parts[RElbow].y) + ")")
+        print("Nose: (" + str(human.body_parts[Nose].x) + "," + str(human.body_parts[Nose].y) + ")")
+
+
 
 ##########################Basic Coordinate Checks ##########################
 #These are the basic x/y coordinate mapping estimation building blocks
@@ -83,13 +95,13 @@ def check_x_less(body_part1, body_part2):
         return False
 def check_y_less(body_part1, body_part2):
     #invert because the biggger the number the lower it is
-    if body_part1.x > body_part2.x:
+    if body_part1.x < body_part2.x:
         return True
     else:
         return False
 def check_x_less(body_part1, body_part2):
     #invert because the biggger the number the lower it is
-    if body_part1.y > body_part2.y:
+    if body_part1.y < body_part2.y:
         return True
     else:
         return False
