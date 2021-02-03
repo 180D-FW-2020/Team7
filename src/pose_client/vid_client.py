@@ -21,22 +21,11 @@ h = 480
 RESIZE_OUT_RATIO = 2.0
 host = '72.134.122.226'#THIS IS CONSTANT
 port = 5001 #SO IS THIS
-
-
  #THIS IS CONSTANT
-
-
 def str2bool(v):
     return v.lower() in ("yes", "true", "t", "1")
 signal_catch = False;
-
-
-
 if __name__ == '__main__':
-
-
-
-
     parser = argparse.ArgumentParser(description='realtime broadcasting webcam')
     parser.add_argument('--input', default='camera')
     parser.add_argument('--video', type=str, default='')
@@ -68,7 +57,7 @@ if __name__ == '__main__':
 
     while True:
         frame_num += 1;
-        print(frame_num)
+        #print(frame_num)
         if frame_num % 5 == 0:
             ok, frame = device.read()
             frame = cv2.resize(frame,(480,480));
@@ -76,18 +65,21 @@ if __name__ == '__main__':
             data = pickle.dumps(frame)
 
             synth = str(len(data)) + str(args.player);
-            print(str(len(data)))
-            print(synth)
+            #print(str(len(data)))
+            #print(synth)
 
             int_synth = int(synth)
-            print(int_synth)
+            #print(int_synth)
             #client_socket.sendall(struct.pack("L", len(data), args.player) + data)
+
             client_socket.sendall(struct.pack("L", int_synth) + data)
             #print(str(len(struct.pack("L", int_synth) + data)))
             now = datetime.now()
             current_time = now.strftime("%M:%S")
-            print(current_time);
-            print("Current frame:" + str(frame_num));
+            print("\nSent vid stream frame to " + str(host))
+            print("\tCurrent Time " + str(current_time));
+            print("\tCurrent frame:" + str(frame_num));
+            print("\tFrames being sent at FPS: %f" % (1.0 / (time.time() - fps_time)))
 
             if(signal_catch == True):
                 exit(0);
