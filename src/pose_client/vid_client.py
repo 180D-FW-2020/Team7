@@ -52,7 +52,12 @@ if __name__ == '__main__':
     frame_num = 0;
 
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_socket.connect((host, port))
+    try:
+        client_socket.connect((host, port))
+    except:
+        print("Host " + str(host) + " is not accepting connections");
+        print("Please make sure server is accepting connections");
+        exit();
 
 
     while True:
