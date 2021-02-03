@@ -4,6 +4,7 @@ import sys
 import time
 import math
 import IMU
+import argparse
 from collections import deque
 
 import random
@@ -42,10 +43,9 @@ cAlpha = 160 # yaw
 cGamma = 160 # roll
 
 # hook (swing) punch
-hXAcc = 12
-hYAcc = -15
-hBeta = 120
-
+hZAcc = -15
+hGamma = -90
+hAlpha = 90
 ############ MQTT ############
 
 broker = 'broker.emqx.io'
@@ -162,7 +162,7 @@ def loop():
                     action = "c"
                     punchTime = time.perf_counter()
 
-                if avaX > hXAcc and avaY < hYAcc and avgY > hBeta:
+                if avaZ < hZAcc and avgZ > hAlpha and avgX < hGamma:
                     print("Hook!", end='\n')
                     punchReg = True
                     pubReg = True
