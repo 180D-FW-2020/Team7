@@ -28,6 +28,19 @@ pThreshold = 14
 gThreshold = 150
 _SENSORS_GRAVITY_STANDARD = 9.80665
 
+
+######### Thresholds #########
+
+xThr = 14
+
+# cross-body punch
+cAlpha = 160 # yaw
+cGamma = 160 # roll
+
+# hook (swing) punch
+hGamma = -100
+hBeta = 120
+
 ############ MQTT ############
 
 broker = 'broker.emqx.io'
@@ -49,12 +62,8 @@ def connect_mqtt():
 
 def publish(client, action):
 	global PRINT
-	dict = {
-		1: "b",
-		2: "c",
-		3: "h"
-	}
-	msg = json.dumps({"playerID": 1, "action": dict[action]})
+	
+	msg = json.dumps({"playerID": 1, "action": action})
 	result = client.publish(topic, msg)
 	# result: [0, 1]
 	status = result[0]
@@ -109,7 +118,7 @@ def loop():
     while 1:
 
         client.loop_start()
-
+        action = ""
         #Read the accelerometer,gyroscope and magnetometer values
         _ACCx = IMU.readACCx(); _ACCy = IMU.readACCy(); _ACCz = IMU.readACCz()
         _GYRx = IMU.readGYRx(); _GYRy = IMU.readGYRy(); _GYRz = IMU.readGYRz()
@@ -163,12 +172,24 @@ def loop():
             print(x, end='	\r', flush=True)
         
         if PLAY:
-            if avaX > pThreshold and avgX > gThreshold and punchReg == False: 
-                print("Punch!", end='\n')
-                punchReg = True
-                pubReg = True
-                hitcounter += 1
-                punchTime = time.perf_counter()
+            if punchReg == False:
+
+                if avaX > xThr and avgX > cGamma and avgZ > cAlpha: 
+                    print("Cross!", end='\n')
+                    punchReg = True
+                    pubReg = True
+                    hitcounter += 1
+                    action = "c"
+                    punchTime = time.perf_counter()
+
+                if avaX > xThr and avgX < hGamma and avgY > hBeta:
+                    print("Hook!", end='\n')
+                    punchReg = True
+                    pubReg = True
+                    hitcounter += 1
+                    action = "h"
+                    punchTime = time.perf_counter()
+
 
             if time.perf_counter() - punchTime >= 1:
                 punchReg = False
