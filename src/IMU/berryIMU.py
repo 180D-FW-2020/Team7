@@ -4,6 +4,7 @@ import sys
 import time
 import math
 import IMU
+from collections import deque
 
 import random
 import json
@@ -12,6 +13,9 @@ from paho.mqtt import client as mqtt_client
 DEBUG = 1
 MQTT = 1
 PRINT = 1
+
+_accX = deque(); _accY = deque(); _accZ = deque()
+_gyX  = deque(); _gyY  = deque(); _gyZ  = deque()
 
 RAD_TO_DEG = 57.29578
 M_PI = 3.14159265358979323846
