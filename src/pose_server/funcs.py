@@ -65,7 +65,7 @@ def player_thread(client, opWrapper, mqtt_client, mqtt_channel, debug, addr):
         msg_size = struct.unpack("L", packed_msg_size)[0]
         #print(str(msg_size))
         str_msg = str(msg_size);
-        print("Size with last digit player" +str_msg);
+        #print("Size with last digit player" +str_msg);
         player_num = int(str_msg[-1]);
         msg_size = int(str_msg[:-1])
         player = "player" + str(player_num);
@@ -77,12 +77,12 @@ def player_thread(client, opWrapper, mqtt_client, mqtt_channel, debug, addr):
         frame = pickle.loads(frame_data)
         now = datetime.now()
         current_time = now.strftime("%M:%S")
-        print (current_time + " -- "+ str(frame.size))
+        print ("\tTime: " + current_time + " -- "+ str(frame.size))
         datum = op.Datum()
         datum.cvInputData = frame#imageToProcess
-        print ("\tpost process " + current_time + " -- "+ str(frame.size))
+        print ("\tPost process " + current_time + " -- "+ str(frame.size))
         stats = opWrapper.emplaceAndPop(op.VectorDatum([datum]))
-        print(str(stats));
+        #print(str(stats));
         poseModel = op.PoseModel.BODY_25
         #print(op.getPoseBodyPartMapping(poseModel))
         #print("Body keypoints: \n" + str(datum.poseKeypoints))

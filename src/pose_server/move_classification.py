@@ -64,11 +64,11 @@ def move(human_arr):
 #Used for debugging coordinates and stuff of the like
 
 def print_arms_blocking_head(human):
-        print("Left Wrist: (" + str(human.body_parts[LWrist].x) + "," + str(human.body_parts[LWrist].y) + ")")
-        print("Rigt Wrist: (" + str(human.body_parts[RWrist].x) + "," + str(human.body_parts[RWrist].y) + ")")
-        print("Left Elbow: (" + str(human.body_parts[LElbow].x) + "," + str(human.body_parts[LElbow].y) + ")")
-        print("Right Elbow: (" + str(human.body_parts[RElbow].x) + "," + str(human.body_parts[RElbow].y) + ")")
-        print("Nose: (" + str(human.body_parts[Nose].x) + "," + str(human.body_parts[Nose].y) + ")")
+        print("\tLeft Wrist: (" + str(human.body_parts[LWrist].x) + "," + str(human.body_parts[LWrist].y) + ")")
+        print("\tRigt Wrist: (" + str(human.body_parts[RWrist].x) + "," + str(human.body_parts[RWrist].y) + ")")
+        print("\tLeft Elbow: (" + str(human.body_parts[LElbow].x) + "," + str(human.body_parts[LElbow].y) + ")")
+        print("\tRight Elbow: (" + str(human.body_parts[RElbow].x) + "," + str(human.body_parts[RElbow].y) + ")")
+        print("\tNose: (" + str(human.body_parts[Nose].x) + "," + str(human.body_parts[Nose].y) + ")")
 
 
 
@@ -139,6 +139,6 @@ def is_left_arm_straight_down(human):
         print("Left Arm is straight down")
 def are_arms_blocking_head(human):
         if is_medial_y(human.body_parts[LElbow],human.body_parts[Nose],human.body_parts[RElbow]) and is_medial_y(human.body_parts[LWrist], human.body_parts[Nose], human.body_parts[RWrist]) and is_medial_x(human.body_parts[LWrist],human.body_parts[Nose],human.body_parts[LElbow]) and is_medial_x(human.body_parts[RWrist],human.body_parts[Nose],human.body_parts[RElbow]):
-                print("Human is blocking face")
+                print("\t#############Face Block Detected###############");
                 return True
         return False
