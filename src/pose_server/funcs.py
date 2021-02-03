@@ -92,7 +92,8 @@ def player_thread(client, opWrapper, mqtt_client, mqtt_channel, debug, addr):
             message = json.dumps({"playerID": player_num, "action": "o"})
             
         else:
-            message = json.dumps({"player": player, "action": "x"})
+            #message = json.dumps({"player": player, "action": "x"})
+            print("");
         mqtt_client.publish(mqtt_channel, message, qos = 1)
         if debug:
             cv2.putText(datum.cvOutputData,
