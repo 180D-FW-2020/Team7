@@ -2,9 +2,11 @@ import csv
 import time
 import sys
 import IMU
+import argparse
+
 from collections import deque
 
-DEBUG = 0
+DEBUG = False
 
 fname = "./data/{}.csv".format(time.strftime('%Y%m%d-%H%M%S'))
 
@@ -26,6 +28,13 @@ def _gyro(raw):
     return map(lambda x: x * _GYRO_DPS, raw)
 
 ############     won't deal with magnetometer. fuck the magnetometer.     ############
+
+parser = argparse.ArgumentParser(description = 'data collection stuff')
+parser.add_argument('--debug', default =  False)
+
+args = parser.parse_args()
+if args.debug:
+	DEBUG = True
 
 IMU.detectIMU()     #Detect if BerryIMU is connected.
 if(IMU.BerryIMUversion == 99):
@@ -128,5 +137,5 @@ with open(fname, 'w') as csvfile:
 
 
         if DEBUG:
-            print(buffer, end='                 	\r', flush=True)
+            print(buffer, flush=True)
         csvwriter.writerow(buffer)
