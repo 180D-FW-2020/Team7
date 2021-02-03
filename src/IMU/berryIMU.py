@@ -156,7 +156,7 @@ def loop():
 
         if PRINT:
             x = f"accel: ({avaX:.3f},{avaY:.3f},{avaZ:.3f}) gyro: ({avgX:.3f},{avgY:.3f},{avgZ:.3f}) temp: {t:.2f}"
-			print(x, end='	\r', flush=True)
+            print(x, end='	\r', flush=True)
         
         if DEBUG:
             if avaX > pthreshold and avgX < gthreshold and punchReg == False: 
@@ -178,3 +178,9 @@ def loop():
                 pubReg = False
 
         iter += 1
+
+
+
+if __name__ == "__main__":
+    setup()
+    loop()
