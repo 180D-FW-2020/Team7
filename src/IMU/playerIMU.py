@@ -129,11 +129,12 @@ def loop():
     iter = 0
 
     client = connect_mqtt()
+    action = ""
 
     while 1:
         sync = int(time.time())
         client.loop_start()
-        action = ""
+
         #Read the accelerometer,gyroscope and magnetometer values
         _ACCx = IMU.readACCx(); _ACCy = IMU.readACCy(); _ACCz = IMU.readACCz()
         _GYRx = IMU.readGYRx(); _GYRy = IMU.readGYRy(); _GYRz = IMU.readGYRz()
@@ -181,6 +182,7 @@ def loop():
             if sync % 5 == 0 and pubReg:
                 publish(client, action, ID)
                 pubReg = False
+                action = ""
 
         iter += 1
 
