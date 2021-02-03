@@ -89,6 +89,8 @@ def _gyro(raw):
 ############     won't deal with magnetometer. fuck the magnetometer.     ############
 
 def setup():
+    global PRINT, ID 
+
 
     parser = argparse.ArgumentParser(description = 'data collection stuff')
     parser.add_argument('--print', type = int, default = 0)
@@ -100,6 +102,7 @@ def setup():
     if not (args.player == 1 or args.player == 2):
         print("Please input \"--player 1\" OR \"--player 2")
         exit()
+    ID = args.player
 
     IMU.detectIMU()     #Detect if BerryIMU is connected.
     if(IMU.BerryIMUversion == 99):
