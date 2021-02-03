@@ -40,13 +40,20 @@ client_socket = None
 if __name__ == '__main__':
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1);
-    server_socket.bind((host, port))
-
-
     parser = argparse.ArgumentParser(description='tf-pose-estimation realtime webcam')
     parser.add_argument('--debug', default='false');
     parser.add_argument('--mqtt', type=str, default='')
+    parser.add_argument('--host', type=str, default='');
+    parser.add_argument('--port', type=int, default=-1);
     args = parser.parse_args()
+    ##if other port is needed
+    if(args.port != -1):
+        print("Changing host port to " + str(args.port))
+        port = args.port;
+    ##If other cpu needs to be specified
+    if(args.host.lower() != ""):
+        print("Changeing Host addr to " + args.host.lower());
+        host = args.host.lower();
     debug = False;
     if(args.debug.lower() == "true"):
         debug = True
@@ -55,6 +62,7 @@ if __name__ == '__main__':
     else:
         print("NEED MQTT \"--mqtt *channel*\"");
         exit();
+    server_socket.bind((host, port))
     client = create_mqtt_channel(mqtt_channel);
     server_socket.listen(5)    
     while True:
