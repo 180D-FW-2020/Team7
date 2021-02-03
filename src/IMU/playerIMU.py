@@ -178,8 +178,8 @@ def loop():
             if pubReg:
                 publish(client, action, ID)
                 pubReg = False
-            else:
-                publish(client, 'X', ID)
+#            else:
+#                publish(client, 'X', ID)
 
         iter += 1
 
