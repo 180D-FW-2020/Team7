@@ -54,7 +54,7 @@ def publish(client, action):
 		2: "c",
 		3: "h"
 	}
-	msg = json.dumps({"player": 1, "action": dict[action]})
+	msg = json.dumps({"playerID": 1, "action": dict[action]})
 	result = client.publish(topic, msg)
 	# result: [0, 1]
 	status = result[0]
