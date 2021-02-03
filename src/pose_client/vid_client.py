@@ -31,9 +31,15 @@ if __name__ == '__main__':
     parser.add_argument('--video', type=str, default='')
     parser.add_argument('--debug', default='false');
     parser.add_argument('--player', type=int, default=-1);
-
+    parser.add_argument('--host', type=str, default='');
+    parser.add_argument('--port', type=int, default=-1);
     args = parser.parse_args()
-
+    if(args.port != -1):
+        print("Changing host port to " + str(args.port))
+        port = args.port;
+    if(args.host.lower() != ""):
+        print("Changeing Host addr to " + args.host.lower());
+        host = args.host.lower();
     if(args.input.lower() == "video"):
         use_video = True
     if(args.debug.lower() == "true"):
