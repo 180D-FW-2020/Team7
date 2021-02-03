@@ -10,12 +10,12 @@ import random
 import json
 from paho.mqtt import client as mqtt_client
 
-DEBUG = 1
+PLAY = 1
 MQTT = 1
 PRINT = 1
 
 _accX = deque(); _accY = deque(); _accZ = deque()
-_gyX  = deque(); _gyY  = deque(); _gyZ  = deque()
+_gyrX = deque(); _gyrY = deque(); _gyrZ = deque()
 
 RAD_TO_DEG = 57.29578
 M_PI = 3.14159265358979323846
@@ -25,7 +25,7 @@ _GYRO_DPS = 0.0700
 # GYRO_LPF_FACTOR = 0.4
 windowSize = 20
 pThreshold = 14
-gThreshold = -150
+gThreshold = 150
 _SENSORS_GRAVITY_STANDARD = 9.80665
 
 ############ MQTT ############
@@ -94,7 +94,7 @@ def setup():
         _gyrZ.append(gz)
 
 def loop():
-    global DEBUG, MQTT, PRINT
+    global PLAY, MQTT, PRINT
     
     hitcounter = 0
     punchReg = False
@@ -159,21 +159,19 @@ def loop():
         avgZ = sum(_gyrZ) / len(_gyrZ)
 
         if PRINT:
-            x = f"accel: ({avaX:.3f},{avaY:.3f},{avaZ:.3f}) gyro: ({avgX:.3f},{avgY:.3f},{avgZ:.3f}) temp: {t:.2f}"
+            x = f"accel: ({avaX:.3f},{avaY:.3f},{avaZ:.3f}) gyro: ({avgX:.3f},{avgY:.3f},{avgZ:.3f})"
             print(x, end='	\r', flush=True)
         
-        if DEBUG:
-            if avaX > pthreshold and avgX < gthreshold and punchReg == False: 
+        if PLAY:
+            if avaX > pThreshold and avgX > gThreshold and punchReg == False: 
                 print("Punch!", end='\n')
                 punchReg = True
                 pubReg = True
                 hitcounter += 1
-                GPIO.output(18,GPIO.HIGH)
                 punchTime = time.perf_counter()
 
             if time.perf_counter() - punchTime >= 1:
                 punchReg = False
-                GPIO.output(18,GPIO.LOW)
 
         if MQTT:
             if pubReg:
