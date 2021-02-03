@@ -178,12 +178,9 @@ def loop():
                 punchReg = False
 
         if MQTT:
-            if sync % 5 == 0:
-                if pubReg:
-                    publish(client, action, ID)
-                    pubReg = False
-                else:
-                    publish(client, '', ID)
+            if sync % 5 == 0 and pubReg:
+                publish(client, action, ID)
+                pubReg = False
 
         iter += 1
 
