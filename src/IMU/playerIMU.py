@@ -125,13 +125,13 @@ def loop():
     punchReg = False
     pubReg = False
     punchTime = time.perf_counter()
-
+    
     iter = 0
 
     client = connect_mqtt()
 
     while 1:
-
+        sync = int(time.time())
         client.loop_start()
         action = ""
         #Read the accelerometer,gyroscope and magnetometer values
@@ -178,11 +178,12 @@ def loop():
                 punchReg = False
 
         if MQTT:
-            if pubReg:
-                publish(client, action, ID)
-                pubReg = False
-#            else:
-#                publish(client, 'X', ID)
+            if sync % 5 == 0:
+                if pubReg:
+                    publish(client, action, ID)
+                    pubReg = False
+                else:
+                    publish(client, '', ID)
 
         iter += 1
 
