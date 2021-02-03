@@ -38,12 +38,12 @@ _SENSORS_GRAVITY_STANDARD = 9.80665
 
 
 # cross-body punch
-cXAcc = 14
-cAlpha = 160 # yaw
+cXAcc = 13
+#cAlpha = 160 # yaw
 cGamma = 160 # roll
 
 # hook (swing) punch
-hZAcc = -15
+hZAcc = -14
 hGamma = -90
 hAlpha = 90
 ############ MQTT ############
@@ -157,7 +157,7 @@ def loop():
         if PLAY:
             if punchReg == False:
 
-                if avaX > cXAcc and avgX > cGamma and avgZ > cAlpha: 
+                if avaX > cXAcc and avgX > cGamma: # and avgZ > cAlpha: 
                     print("Cross!", end='\n')
                     punchReg = True
                     pubReg = True
