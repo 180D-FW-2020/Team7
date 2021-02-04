@@ -90,11 +90,11 @@ def player_thread(client, opWrapper, mqtt_client, mqtt_channel, debug, addr):
         #####MQTT SEND IT#######
         if movement == "blocking":
             message = json.dumps({"playerID": player_num, "action": "o"})
-            
+            mqtt_client.publish(mqtt_channel, message, qos = 1)            
         else:
             #message = json.dumps({"player": player, "action": "x"})
             print("");
-        mqtt_client.publish(mqtt_channel, message, qos = 1)
+
         if debug:
             cv2.putText(datum.cvOutputData,
                         "FPS: %f" % (1.0 / (time.time() - fps_time)),
