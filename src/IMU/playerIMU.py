@@ -177,6 +177,8 @@ def loop():
 
             if time.perf_counter() - punchTime >= 1:
                 punchReg = False
+        if sync % 5 == 4 and action == "":
+            pubReg = True
 
         if MQTT:
             if sync % 5 == 0 and pubReg:
