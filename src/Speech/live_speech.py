@@ -82,7 +82,11 @@ while(True):
         if(spoken):
             print("You said: {}".format(text))
             # find if certain words exist within said phrase
-            if(text.find("begin") != -1 or text.find("start") != -1):
+            if(text.find("restart") != -1):
+                canPublish = True
+                action = 'r'
+                print("Restarting")
+            elif(text.find("begin") != -1 or text.find("start") != -1):
                 canPublish = True
                 action = 'g'
                 print("The game will start!")
@@ -92,7 +96,6 @@ while(True):
                     action = 'p'
                     previousIs += 'p'
                     print("Paused")
-
             elif(text.find("resume") != -1):
                 if(previousIs[len(previousIs) - 1] == 'p'):
                     canPublish = True
@@ -103,6 +106,10 @@ while(True):
                 canPublish = True
                 action = 'q'
                 print("Game quitted")
+            else:
+                canPublish = True
+                action = text
+                print("Sending comments")
 
             if(canPublish):
                 if __name__ == '__main__':
