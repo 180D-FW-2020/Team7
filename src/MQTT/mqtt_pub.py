@@ -35,6 +35,7 @@ def publish(client, action):
              "q" - quit (in boxing scene)
              "g" - start game (in menu scene)
              arbitrary string from speech (in boxing scene)
+             "r" - restart (after knocked out)
          all else ignored
          '''
          action = input("enter command: ")

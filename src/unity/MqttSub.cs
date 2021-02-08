@@ -123,6 +123,10 @@ public class MqttSub : M2MqttUnityClient
             receivedMsg3 = true;
             action3 = players.action;
         }
+        else if (players.playerID == 3 &&  players.action == "r" && EndGame.gameOver) // restart
+        {
+            SceneManager.LoadScene("Boxing");
+        }
     }
     private void StoreMessage(string eventMsg)
     {

@@ -24,6 +24,7 @@ public class EndGame : MonoBehaviour
 
         endGameText.enabled = false;
         quitText.enabled = false;
+        gameOver = false;
     }
 
     // Update is called once per frame
