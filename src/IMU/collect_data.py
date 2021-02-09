@@ -28,6 +28,7 @@ def countdown(t):
         print(timer, end="  \r") 
         time.sleep(1) 
         t -= 1
+    print( "go!")
 
 IMU.detectIMU()     #Detect if BerryIMU is connected.
 if(IMU.BerryIMUversion == 99):
@@ -49,7 +50,7 @@ i = starting_index
 while True:
     
     c = input("Collecting file " + str(i)+ ". Press Q to exit, Enter to continue...")
-    if c.lower() == 'Q':
+    if c.lower() == 'q':
         sys.exit("Exited code.")
 
     data = []
@@ -63,7 +64,7 @@ while True:
         _accX.append(ax); _accY.append(ay); _accZ.append(az)
         _gyrX.append(gx); _gyrY.append(gy); _gyrZ.append(gz)
 
-    counter(3)
+    countdown(3)
 
     start = time.perf_counter()
     elapsed_ms = 0
@@ -102,7 +103,9 @@ while True:
         previous_elapsed_ms = elapsed_ms
         elapsed_ms = (time.perf_counter() - start) * 1000
 
-    if input("save? y/n ").lower() == 'y':
+    if input("delete (n)? ").lower() == 'n':
+        pass
+    else:
         file_name = f"{filename}/{filename}{i:03d}.csv"
         df = pd.DataFrame(data, columns = header)
         df.to_csv(file_name, header=True)
