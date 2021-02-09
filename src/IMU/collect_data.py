@@ -102,7 +102,7 @@ while True:
         previous_elapsed_ms = elapsed_ms
         elapsed_ms = (time.perf_counter() - start) * 1000
 
-    if input("save? y/n "),lower() == 'y':
+    if input("save? y/n ").lower() == 'y':
         file_name = f"{filename}/{filename}{i:03d}.csv"
         df = pd.DataFrame(data, columns = header)
         df.to_csv(file_name, header=True)
