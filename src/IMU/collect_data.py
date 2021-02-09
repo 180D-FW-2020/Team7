@@ -1,6 +1,5 @@
 import IMU
 import time
-import datetime
 import pandas as pd
 import os
 import sys
@@ -53,15 +52,9 @@ while True:
     if c.lower() == 'Q':
         sys.exit("Exited code.")
 
-    
-    start = datetime.datetime.now()
-    elapsed_ms = 0
-    previous_elapsed_ms = 0
     data = []
     _accX = deque(); _accY = deque(); _accZ = deque()
     _gyrX = deque(); _gyrY = deque(); _gyrZ = deque()
-    
-    countdown(3)
 
     while len(_accX) < windowSize: ## setup for filter
         ax,ay,az = _accel((IMU.readACCx(),IMU.readACCy(),IMU.readACCz()))
@@ -69,6 +62,12 @@ while True:
 
         _accX.append(ax); _accY.append(ay); _accZ.append(az)
         _gyrX.append(gx); _gyrY.append(gy); _gyrZ.append(gz)
+
+    counter(3)
+
+    start = time.perf_counter()
+    elapsed_ms = 0
+    previous_elapsed_ms = 0
 
     while elapsed_ms < duration_s * 1000:
 
@@ -101,9 +100,9 @@ while True:
 
         data.append(row)
         previous_elapsed_ms = elapsed_ms
-        elapsed_ms = (datetime.datetime.now() - start).total_seconds() * 1000
+        elapsed_ms = (time.perf_counter() - start) * 1000
 
-    if input("save? y/n ") == 'y':
+    if input("save? y/n "),lower() == 'y':
         file_name = f"{filename}/{filename}{i:03d}.csv"
         df = pd.DataFrame(data, columns = header)
         df.to_csv(file_name, header=True)
