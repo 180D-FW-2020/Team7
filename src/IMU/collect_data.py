@@ -4,7 +4,7 @@ import datetime
 import pandas as pd
 import os
 import sys
-import argparse
+# import argparse
 from collections import deque
 
 
@@ -22,6 +22,11 @@ def _accel(raw):
 def _gyro(raw):
     return map(lambda x: x * _GYRO_DPS, raw)
 
+IMU.detectIMU()     #Detect if BerryIMU is connected.
+if(IMU.BerryIMUversion == 99):
+    print(" No BerryIMU found... exiting ")
+    sys.exit()
+IMU.initIMU()       #Initialise the accelerometer, gyroscope and compass
 
 i = 0
 header = ["time_ms", "delta_ms", "aX", "aY", "aZ", "gX", "gY", "gZ"]
