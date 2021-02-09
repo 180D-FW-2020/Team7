@@ -22,6 +22,14 @@ def _accel(raw):
 def _gyro(raw):
     return map(lambda x: x * _GYRO_DPS, raw)
 
+def countdown(t):
+    while t: 
+        mins, secs = divmod(t, 60) 
+        timer = f'{secs:02d}' 
+        print(timer, end="  \r") 
+        time.sleep(1) 
+        t -= 1
+
 IMU.detectIMU()     #Detect if BerryIMU is connected.
 if(IMU.BerryIMUversion == 99):
     print(" No BerryIMU found... exiting ")
@@ -52,6 +60,8 @@ while True:
     data = []
     _accX = deque(); _accY = deque(); _accZ = deque()
     _gyrX = deque(); _gyrY = deque(); _gyrZ = deque()
+    
+    countdown(3)
 
     while len(_accX) < windowSize: ## setup for filter
         ax,ay,az = _accel((IMU.readACCx(),IMU.readACCy(),IMU.readACCz()))
@@ -94,7 +104,7 @@ while True:
         elapsed_ms = (datetime.datetime.now() - start).total_seconds() * 1000
 
     if input("save? y/n ") == 'y':
-        file_name = f"{filename}/{filename}{i:.03d}.csv"
+        file_name = f"{filename}/{filename}{i:03d}.csv"
         df = pd.DataFrame(data, columns = header)
         df.to_csv(file_name, header=True)
         i += 1
