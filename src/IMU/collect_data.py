@@ -97,7 +97,7 @@ while True:
         ###################
 
         row = [elapsed_ms, int(elapsed_ms - previous_elapsed_ms)] 
-        row.extend((_ACCx, _ACCy, _ACCz)); row.extend((_GYRx, _GYRY, _GYRz))
+        row.extend((_ACCx, _ACCy, _ACCz)); row.extend((_GYRx, _GYRy, _GYRz))
         # row.extend((avaX, avaY, avaZ)); row.extend((avgX, avgY, avgZ))
 
         data.append(row)
