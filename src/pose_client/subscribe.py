@@ -1,8 +1,8 @@
-#!/home/omar/.conda/envs/ece180da/bin/python3.
+#!/usr/bin/python3.
 import paho.mqtt.client as mqtt
 def on_connect(client, userdata, flags, rc):
     print("Connection Returned result: " + str(rc))
-    client.subscribe("team7gang", qos=1);
+    client.subscribe("180d/team7", qos=1);
 def on_disconnect(client, userdata, rc):
     if rc != 0:
         print("Unexpected Disconnect");
