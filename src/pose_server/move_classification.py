@@ -50,16 +50,19 @@ class person:
                 
 
 def move(human_arr):
-        human_count = len(human_arr);
-        #print("human number is " + str(human_count));
-        human_nums = human_arr[0];
-        #print(human_nums);
-        human = person(human_nums);
-        print_arms_blocking_head(human);
-        if are_arms_blocking_head(human):
-                return "blocking";
-        else:
-                return "nothing";
+        try:
+                human_count = len(human_arr);
+                #print("human number is " + str(human_count));
+                human_nums = human_arr[0];
+                #print(human_nums);
+                human = person(human_nums);
+                print_arms_blocking_head(human);
+                if are_arms_blocking_head(human):
+                        return "blocking";
+                else:
+                        return "nothing";
+        except:
+                print("No human found");
 
 #Used for debugging coordinates and stuff of the like
 

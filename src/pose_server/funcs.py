@@ -102,6 +102,7 @@ def player_thread(client, opWrapper, mqtt_client, mqtt_channel, debug, addr):
             if reg == True:
                 if detect_move == True:
                     message = json.dumps({"playerID": player_num, "action": "o"})
+                    detect_move = False;
                 else:
                     message = json.dumps({"playerID": player_num, "action": ""})
                 mqtt_client.publish(mqtt_channel, message, qos = 1)
