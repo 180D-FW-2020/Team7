@@ -38,7 +38,8 @@ def publish(client, action, ID):
 	act = {
         "hook": "h",
         "cross": "c",
-        "negative_trim": "lol"
+        "" : ""
+        #"negative_trim": "lol"
     }
 	msg = json.dumps({"playerID": ID, "action": act[action]})
 	result = client.publish(topic, msg)
@@ -49,13 +50,10 @@ def publish(client, action, ID):
 	else:
 		print(f"Failed to send message to topic {topic}")
 
-def publishThread(_timer, client, action, ID):
-    threading.Timer(_timer, publishThread).start()
-    publish(client, action, ID)
 
 if __name__ == "__main__":
 
-    global PRINT, ID
+#    global PRINT, ID
 
     parser = argparse.ArgumentParser(description = 'data collection stuff')
     parser.add_argument('--print', type = int, default = 0)
@@ -79,15 +77,16 @@ if __name__ == "__main__":
     client = connect_mqtt()
 
     imu = gestureRecognizer()
-    last_classification = "negative_trim"
+    pred = ""
+    last_classification = ""
 
+    sync = time.time()
 
     while 1:
-        sync = int(time.time())
         client.loop_start()
 
         #Read the accelerometer,gyroscope and magnetometer values
-        gesture = [] + imu.collect()
+        gesture = imu.collect()
         # look for a difference in pitch and yaw (about y- and z-axes of rotation)
         thresholdmeasure = gesture[4] - gesture[5]
 
@@ -95,12 +94,18 @@ if __name__ == "__main__":
             print(gesture)
 
 
-        if thresholdmeasure > 2000:
-            pred = gesture.classify()
+        if thresholdmeasure > 1200:
+            pred = imu.classify()
             punchReg = True
+            print("lol")
         if time.perf_counter() - punchTime >= 1:
             punchReg = False
-        if sync % 5 == 0:
+
+
+        if time.time() - sync > 5:
+            publish(client, last_classification, ID)
+            sync = time.time()
+            last_classification = pred
 
 
             # if punchReg == False:
@@ -121,16 +126,3 @@ if __name__ == "__main__":
             #         action = "h"
             #         punchTime = time.perf_counter()
 
-
-            if time.perf_counter() - punchTime >= 1:
-                punchReg = False
-        if sync % 5 == 4 and action == "":
-            pubReg = True
-
-
-        if sync % 5 == 0 and pubReg:
-            publish(client, action, ID)
-            pubReg = False
-            action = ""
-
-        iter += 1
