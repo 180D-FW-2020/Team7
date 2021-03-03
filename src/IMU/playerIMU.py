@@ -88,6 +88,12 @@ def _gyro(raw):
 
 ############     won't deal with magnetometer. fuck the magnetometer.     ############
 
+
+def publishThread(_timer, client, action, ID):
+    threading.Timer(_timer, publishThread).start()
+    publish(client, action, ID)
+
+
 def setup():
     global PRINT, ID 
 
@@ -130,7 +136,9 @@ def loop():
 
     client = connect_mqtt()
     action = ""
+    publishThread(5.0, client, action, ID)
 
+    
     while 1:
         sync = int(time.time())
         client.loop_start()

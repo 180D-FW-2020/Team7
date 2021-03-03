@@ -1,88 +1,90 @@
-import busio
-import time
-import datetime
-import pandas as pd
-from Adafruit_BNO055 import BNO055
-import utils
+from os.path import curdir
+import sys
 import os
-import collections
-from sklearn.externals import joblib
-import subprocess
-import shlex
+import IMU
+import datetime
+from pandas import DataFrame 
+import utils
+from joblib import load 
 
-model = joblib.load('/home/pi/dev/gesture/models/167pt_model.joblib')
+model = load(os.path.join(curdir, 'models', '146pt_model.joblib')) 
 
-SOUNDS = {
-        'flippendo': 'sounds/flippendo.ogg',
-        'wingardium': 'sounds/wingardium.mp3'
-        }
-
-def play(gesture):
-    subprocess.run(shlex.split('omxplayer /home/pi/dev/gesture/{} -o alsa:hw:1,0 &'.format(SOUNDS[gesture])))
-
-def read_sensors(bno):
-    vector = bno._read_vector(BNO055.BNO055_ACCEL_DATA_X_LSB_ADDR, 22)
-    accel = [s / 100. for s in vector[:3]]
-    mag = [s / 16. for s in vector[3:6]]
-    gyro = [s / 900. for s in vector[6:9]]
-    euler = [s / 16. for s in vector[9:12]]
-    quaternion = [s / QUATERNION_SCALE for s in vector[12:16]]
-    lin_accel = [s / 100. for s in vector[16:19]]
-    gravity = [s / 100. for s in vector[19:22]]
-
-    return accel + mag + gyro + euler + quaternion + lin_accel + gravity
-
-SAMPLE_RATE_HZ = 100
-QUATERNION_SCALE = (1.0 / (1 << 14))
 
 CHECK_TIME_INCREMENT_MS = 200
 SAMPLE_SIZE_MS = 1500
 
-bno = BNO055.BNO055(serial_port='/dev/serial0', rst=18)
+_XL_MG_8G = 0.2440       
+_GYRO_DPS = 0.0700    
 
-# Initialize the BNO055 and stop if something went wrong.
-if not bno.begin():
-  raise RuntimeError('Failed to initialize BNO055! Is the sensor connected?')
 
-# Print system status and self test result.
-status, self_test, error = bno.get_system_status()
-print('System status: {0}'.format(status))
-print('Self test result (0x0F is normal): 0x{0:02X}'.format(self_test))
-# Print out an error if system status is in error mode.
-if status == 0x01:
-  print('System error: {0}'.format(error))
-  print('See datasheet section 4.3.59 for the meaning.')
 
-i = 0
-header = ["time_ms"] + utils.get_sensor_headers()
-data = collections.deque(maxlen=int(SAMPLE_SIZE_MS / 10)) #10 Hz
 
-print('Starting operation')
+class gestureRecognizer: 
 
-start = datetime.datetime.now()
-elapsed_ms = 0
-last_classified = 0
-last_classification = "negative_trim"
+    def __init__(self): 
+        global SAMPLE_SIZE_MS
 
-while True:
-  row = [elapsed_ms] + read_sensors(bno)
-  data.append(row)
+        IMU.detectIMU()     #Detect if BerryIMU is connected.
+        if(IMU.BerryIMUversion == 99):
+            print(" No BerryIMU found... exiting ")
+            sys.exit()
+        IMU.initIMU()       #Initialise the accelerometer, gyroscope and compass
 
-  if elapsed_ms - last_classified >= CHECK_TIME_INCREMENT_MS and len(data) == data.maxlen:
-    df = pd.DataFrame(list(data), columns=header)
-    features = utils.get_model_features(df)
-    prediction = model.predict([features])[0]
+        print('Starting operation')
 
-    #print(int(elapsed_ms), prediction)
-    if prediction != 'negative_trim':# and last_classification != prediction:
-        print("========================>", prediction)
-        play(prediction)
-        data.clear()
+        self.i = 0
+        self.header = ["time_ms", "delta_ms"] + utils.get_sensor_headers()
+        self.data = [] 
+        self.maxlen = int(SAMPLE_SIZE_MS / 10)
+        self.start = datetime.datetime.now()
+        self.elapsed_ms = 0
+        self.previous_elapsed_ms = 0
+        self.last_classified = 0
+        self.last_classification = "negative_trim"
 
-    last_classified = elapsed_ms
-    last_classification = prediction
+    def collect(self): 
 
-  elapsed_ms = (datetime.datetime.now() - start).total_seconds() * 1000
+        #Read the accelerometer,gyroscope and magnetometer values
+        ACCx = IMU.readACCx(); ACCy = IMU.readACCy(); ACCz = IMU.readACCz()
+        GYRx = IMU.readGYRx(); GYRy = IMU.readGYRy(); GYRz = IMU.readGYRz()
+        MAGx = IMU.readMAGx(); MAGy = IMU.readMAGy(); MAGz = IMU.readMAGz()
+        
+        accel = [ACCx, ACCy, ACCz]
+        mag = [MAGx, MAGy, MAGz] 
+        gyro = [GYRx, GYRy, GYRz]
+        euler = [0, 0, 0]
+        quaternion = [0, 0, 0, 0]
+        lin_accel = [0, 0, 0]
+        gravity = [0, 0, 0]
 
-  #if elapsed_ms > 10000:
-  #  break
+        return accel + mag + gyro + euler + quaternion + lin_accel + gravity 
+
+    def classify(self): 
+        global model, CHECK_TIME_INCREMENT_MS
+
+        while True: 
+            row = [self.elapsed_ms, int(self.elapsed_ms - self.previous_elapsed_ms)] + self.collect()
+            self.data.append(row)
+            self.previous_elapsed_ms = self.elapsed_ms
+
+            if self.elapsed_ms - self.last_classified >= CHECK_TIME_INCREMENT_MS and len(self.data) == self.maxlen:
+                df = DataFrame(list(self.data), columns=self.header)
+                features = utils.get_model_features(df) + [0]
+                # for i in features: 
+                #     print(i)
+                prediction = model.predict([features])[0]
+
+                #print(int(elapsed_ms), prediction)
+                if prediction != 'negative_trim' and self.last_classification != prediction:
+                    print("========================>", prediction)
+                
+                self.data.clear()
+
+                self.last_classified = self.elapsed_ms
+                self.last_classification = prediction 
+                
+                break 
+
+            self.elapsed_ms = (datetime.datetime.now() - self.start).total_seconds() * 1000
+
+        return str(self.last_classification)
