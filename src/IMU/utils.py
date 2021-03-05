@@ -22,10 +22,10 @@ def get_features(series, generate_feature_names=False):
 def get_model_features(trace, generate_feature_names=False):
     features = []
     trace["accel"] = np.linalg.norm(
-        (trace["aX"], trace["aY"], trace["aZ"]),
+        (trace["accel_ms2_x"], trace["accel_ms2_y"], trace["accel_ms2_z"]),
         axis=0)
     trace["gyro"] = np.linalg.norm(
-        (trace['gX'], trace['gY'], trace['gZ']),
+        (trace['gyro_degs_x'], trace['gyro_degs_y'], trace['gyro_degs_z']),
         axis=0)
 
     for sensor in ['accel', 'gyro']:
@@ -39,7 +39,7 @@ def get_model_features(trace, generate_feature_names=False):
         features.append('accel_z_peaks')
     else:
         normalized = min_max_scaler.fit_transform(
-            trace['aZ'].values.reshape(-1, 1))[:, 0]  # normalize
+            trace['accel_ms2_z'].values.reshape(-1, 1))[:, 0]  # normalize
         normalized = normalized[0:len(normalized):5]  # subsample
         normalized = np.diff(
             (normalized > 0.77).astype(int))  # convert to binary classifier
@@ -51,12 +51,12 @@ def get_model_features(trace, generate_feature_names=False):
 
 def get_sensor_headers():
     header = []
-    for sensor in ["a", "m", "g", "euler_deg",
+    for sensor in ["accel_ms2", "mag_uT", "gyro_degs", "euler_deg",
                    "quaternion",
                    "lin_accel_ms2", "gravity_ms2"]:
         if sensor is "quaternion":
-            header.append(sensor + "W")
-        header.append(sensor + "X")
-        header.append(sensor + "Y")
-        header.append(sensor + "Z")
+            header.append(sensor + "_w")
+        header.append(sensor + "_x")
+        header.append(sensor + "_y")
+        header.append(sensor + "_z")
     return header

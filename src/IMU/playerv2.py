@@ -88,13 +88,13 @@ if __name__ == "__main__":
         #Read the accelerometer,gyroscope and magnetometer values
         gesture = [] + imu.collect()
         # look for a difference in pitch and yaw (about y- and z-axes of rotation)
-        thresholdmeasure = gesture[4] - gesture[5]
+        thresholdmeasure = (abs(gesture[0]) + abs(gesture[1]) + abs(gesture[2])) / 3
 
         if PRINT:
             print(gesture)
 
 
-        if thresholdmeasure > 1200:
+        if thresholdmeasure > 200:
             pred = imu.classify()
             punchReg = True
             print("lol")
