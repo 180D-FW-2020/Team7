@@ -62,7 +62,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     PRINT = args.print
     ID = args.player
-    if player not in range(1,4):
+    if ID not in range(1,4):
         print("Please input \"--player 1\" OR \"--player 2")
         exit()
 
