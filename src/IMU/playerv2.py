@@ -8,7 +8,7 @@ import random
 import json
 from paho.mqtt import client as mqtt_client
 
-PRINT = 0
+PRINT = 1
 ID = 0
 
 _XL_MG_8G = 0.2440       
@@ -60,12 +60,11 @@ if __name__ == "__main__":
     parser.add_argument('--player', type = int, default = 0)
 
     args = parser.parse_args()
-    if args.print == 1:
-	    PRINT = 1
-    if not (args.player == 1 or args.player == 2):
+    PRINT = args.print
+    ID = args.player
+    if player not in range(1,4):
         print("Please input \"--player 1\" OR \"--player 2")
         exit()
-    ID = args.player
 
     hitcounter = 0
     punchReg = False
@@ -81,6 +80,21 @@ if __name__ == "__main__":
     last_classification = ""
 
     sync = time.time()
+    elapsed_ms = 0
+    previous_elapsed_ms = 0
+
+
+    while elapsed_ms < 1.5 * 1000 * 2:
+        begin = [] + n.collect()
+        accel_base += (abs(begin[0]) + abs(begin[1]) + abs(begin[2])) / 3
+        previous_elapsed_ms = elapsed_ms
+        elapsed_ms = (datetime.datetime.now() - start).total_seconds() * 1000
+        count += 1
+
+    accel_base = accel_base/count 
+
+    print("Base acceleration: " + str(accel_base)) 
+
 
     while 1:
         client.loop_start()
@@ -94,7 +108,7 @@ if __name__ == "__main__":
             print(gesture)
 
 
-        if thresholdmeasure > 200:
+        if thresholdmeasure - accel_base > 200:
             pred = imu.classify()
             punchReg = True
             print("lol")
