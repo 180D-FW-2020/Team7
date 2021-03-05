@@ -6,8 +6,9 @@ import datetime
 from pandas import DataFrame 
 import utils
 from joblib import load 
+import numpy as np
 
-model = load(os.path.join(curdir, 'models', '193pt_model.joblib')) 
+
 
 
 CHECK_TIME_INCREMENT_MS = 200
@@ -22,6 +23,8 @@ _GYRO_DPS = 0.0700
 class gestureRecognizer: 
 
     def __init__(self): 
+
+
         global SAMPLE_SIZE_MS
 
         IMU.detectIMU()     #Detect if BerryIMU is connected.
@@ -41,6 +44,7 @@ class gestureRecognizer:
         self.previous_elapsed_ms = 0
         self.last_classified = 0
         self.last_classification = "negative_trim"
+        self.model = load(os.path.join(curdir, 'models', '193pt_model.joblib')) 
 
     def collect(self): 
 
@@ -59,18 +63,6 @@ class gestureRecognizer:
 
         return accel + mag + gyro + euler + quaternion + lin_accel + gravity 
 
-    def get_sensor_headers(self):
-        header = []
-        for sensor in ["accel_ms2", "mag_uT", "gyro_degs", "euler_deg",
-                    "quaternion",
-                    "lin_accel_ms2", "gravity_ms2"]:
-            if sensor is "quaternion":
-                header.append(sensor + "_w")
-            header.append(sensor + "_x")
-            header.append(sensor + "_y")
-            header.append(sensor + "_z")
-        return header
-
     def classify(self): 
         global model, CHECK_TIME_INCREMENT_MS
         data = []
@@ -86,11 +78,11 @@ class gestureRecognizer:
                 for x in range(len(self.header)):
                     col = []
                     for y in range(len(self.data)):
-                        column.append(data[x][y])
-                    frame[self.header[x]] = np.array(column)
+                        col.append(data[x][y])
+                    frame[self.header[x]] = np.array(col)
 
 
-                features = self.get_model_features(df) + [0]
+                features = utils.get_model_features(frame) + [0]
                 prediction = self.model.predict([features])[0]
 
                 #print(int(elapsed_ms), prediction)
@@ -106,46 +98,3 @@ class gestureRecognizer:
             self.elapsed_ms = (datetime.datetime.now() - self.start).total_seconds() * 1000
 
         return str(self.last_classification)
-
-    def get_model_features(self, trace, generate_feature_names=False):
-        features = []
-        trace["accel"] = np.linalg.norm(
-            (trace["aX"], trace["aY"], trace["aZ"]),
-            axis=0)
-        trace["gyro"] = np.linalg.norm(
-            (trace['gX'], trace['gY'], trace['gZ']),
-            axis=0)
-
-        for sensor in ['accel', 'gyro']:
-            features_temp = self.get_features(trace[sensor], generate_feature_names)
-            if generate_feature_names:
-                features.extend([x + '_' + sensor for x in features_temp])
-            else:
-                features.extend(features_temp)
-
-        if generate_feature_names:
-            features.append('accel_z_peaks')
-        else:
-            normalized = self.min_max_scaler.fit_transform(
-                trace['aZ'].reshape(-1, 1).astype(np.float))[:, 0]  # normalize
-            normalized = normalized[0:len(normalized):5]  # subsample
-            normalized = np.diff(
-                (normalized > 0.77).astype(int))  # convert to binary classifier
-            normalized = normalized[normalized > 0]
-            features.append(sum(normalized))
-            normalized = self.min_max_scaler.fit_transform(
-                trace['gZ'].reshape(-1, 1).astype(np.float))[:, 0]  # normalize
-            normalized = normalized[0:len(normalized):5]  # subsample
-            normalized = np.diff(
-                (normalized > 0.77).astype(int))  # convert to binary classifier
-            normalized = normalized[normalized > 0]
-            features.append(sum(normalized))
-
-        return features
-
-    def get_features(self, series, generate_feature_names=False):
-        if generate_feature_names:
-            return ['max', 'min', 'range', 'mean', 'std']
-        features = []
-        features.extend((max(series), min(series), max(series) - min(series), series.mean(), series.std()))
-        return features
