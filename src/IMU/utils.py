@@ -22,10 +22,10 @@ def get_features(series, generate_feature_names=False):
 def get_model_features(trace, generate_feature_names=False):
     features = []
     trace["accel"] = np.linalg.norm(
-        (trace["ACCx"], trace["ACCy"], trace["ACCz"]),
+        (trace["aX"], trace["aY"], trace["aZ"]),
         axis=0)
     trace["gyro"] = np.linalg.norm(
-        (trace['GYRx'], trace['GYRy'], trace['GYRz']),
+        (trace['gX'], trace['gY'], trace['gZ']),
         axis=0)
 
     for sensor in ['accel', 'gyro']:
@@ -39,7 +39,7 @@ def get_model_features(trace, generate_feature_names=False):
         features.append('accel_z_peaks')
     else:
         normalized = min_max_scaler.fit_transform(
-            trace['ACCz'].values.reshape(-1, 1))[:, 0]  # normalize
+            trace['aZ'].values.reshape(-1, 1))[:, 0]  # normalize
         normalized = normalized[0:len(normalized):5]  # subsample
         normalized = np.diff(
             (normalized > 0.77).astype(int))  # convert to binary classifier

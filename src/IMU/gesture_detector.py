@@ -7,7 +7,7 @@ from pandas import DataFrame
 import utils
 from joblib import load 
 
-model = load(os.path.join(curdir, 'models', '146pt_model.joblib')) 
+model = load(os.path.join(curdir, 'models', '193pt_model.joblib')) 
 
 
 CHECK_TIME_INCREMENT_MS = 200
@@ -45,13 +45,13 @@ class gestureRecognizer:
     def collect(self): 
 
         #Read the accelerometer,gyroscope and magnetometer values
-        ACCx = IMU.readACCx(); ACCy = IMU.readACCy(); ACCz = IMU.readACCz()
-        GYRx = IMU.readGYRx(); GYRy = IMU.readGYRy(); GYRz = IMU.readGYRz()
+        aX = IMU.readACCx(); aY = IMU.readACCy(); aZ = IMU.readACCz()
+        gX = IMU.readGYRx(); gY = IMU.readGYRy(); gZ = IMU.readGYRz()
         MAGx = IMU.readMAGx(); MAGy = IMU.readMAGy(); MAGz = IMU.readMAGz()
         
-        accel = [ACCx, ACCy, ACCz]
+        accel = [aX, aY, aZ]
         mag = [MAGx, MAGy, MAGz] 
-        gyro = [GYRx, GYRy, GYRz]
+        gyro = [gX, gY, gZ]
         euler = [0, 0, 0]
         quaternion = [0, 0, 0, 0]
         lin_accel = [0, 0, 0]
