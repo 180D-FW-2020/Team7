@@ -86,7 +86,7 @@ if __name__ == "__main__":
         client.loop_start()
 
         #Read the accelerometer,gyroscope and magnetometer values
-        gesture = imu.collect()
+        gesture = [] + imu.collect()
         # look for a difference in pitch and yaw (about y- and z-axes of rotation)
         thresholdmeasure = gesture[4] - gesture[5]
 
