@@ -51,10 +51,10 @@ class gestureRecognizer:
         #Read the accelerometer,gyroscope and magnetometer values
         aX = IMU.readACCx(); aY = IMU.readACCy(); aZ = IMU.readACCz()
         gX = IMU.readGYRx(); gY = IMU.readGYRy(); gZ = IMU.readGYRz()
-        MAGx = IMU.readMAGx(); MAGy = IMU.readMAGy(); MAGz = IMU.readMAGz()
+        mX = IMU.readMAGx(); mY = IMU.readMAGy(); mZ = IMU.readMAGz()
         
         accel = [aX, aY, aZ]
-        mag = [MAGx, MAGy, MAGz] 
+        mag = [mX, mY, mZ] 
         gyro = [gX, gY, gZ]
         euler = [0, 0, 0]
         quaternion = [0, 0, 0, 0]

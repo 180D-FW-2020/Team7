@@ -51,12 +51,12 @@ def get_model_features(trace, generate_feature_names=False):
 
 def get_sensor_headers():
     header = []
-    for sensor in ["accel_ms2", "mag_uT", "gyro_degs", "euler_deg",
+    for sensor in ["a", "m", "g", "euler_deg",
                    "quaternion",
                    "lin_accel_ms2", "gravity_ms2"]:
         if sensor is "quaternion":
-            header.append(sensor + "_w")
-        header.append(sensor + "_x")
-        header.append(sensor + "_y")
-        header.append(sensor + "_z")
+            header.append(sensor + "W")
+        header.append(sensor + "X")
+        header.append(sensor + "Y")
+        header.append(sensor + "Z")
     return header
