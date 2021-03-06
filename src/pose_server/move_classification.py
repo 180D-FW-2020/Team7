@@ -168,8 +168,8 @@ def is_right_jab(human):
                 return True
         else:
                 return False;
-def not_null(x):
-        if x > 0.0: return True;
+def not_null(part):
+        if part.x > 0.0 and part.y > 0.0: return True;
         else: return False;
 def is_right_cross(human):
         if is_medial_y(human.body_parts[RShoulder],human.body_parts[RElbow],human.body_parts[RWrist]) and check_x_less(human.body_parts[Nose],human.body_parts[RElbow]) and not_null(human.body_parts[RElbow]) and not_null(human.body_part[RShoulder]) and not_null(human.body_part[RWrist]):
