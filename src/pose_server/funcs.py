@@ -55,12 +55,9 @@ def create_mqtt_channel(mqtt_channel):
 def player_thread(client, opWrapper, mqtt_client, mqtt_channel, debug, addr):
     data = b''
     fps_time = 0;
-<<<<<<< HEAD
     epoch = time.time();
-=======
     detect_move = False;
     reg = False;
->>>>>>> 4f5cfbd260df9900a859c441ee02d82eaa4f8b38
     while True:
         payload_size = struct.calcsize("L")
         while len(data) < payload_size:
@@ -95,14 +92,12 @@ def player_thread(client, opWrapper, mqtt_client, mqtt_channel, debug, addr):
         movement = move(datum.poseKeypoints);
         #####MQTT SEND IT#######
         if movement == "blocking":
-<<<<<<< HEAD
             message = json.dumps({"playerID": player_num, "action": "o"})
             mqtt_client.publish(mqtt_channel, message, qos = 1)
         else:
             message = json.dumps({"player": player, "action": ""})
             print("");
 
-=======
             # message = json.dumps({"playerID": player_num, "action": "o"})
             # mqtt_client.publish(mqtt_channel, message, qos = 1)
             detect_move = True;
@@ -122,7 +117,6 @@ def player_thread(client, opWrapper, mqtt_client, mqtt_channel, debug, addr):
         if int(time.time()) % 6 == 0:
             reg = True;
             detect_move = False;
->>>>>>> 4f5cfbd260df9900a859c441ee02d82eaa4f8b38
         if debug:
             cv2.putText(datum.cvOutputData,
                         "FPS: %f" % (1.0 / (time.time() - fps_time)),
