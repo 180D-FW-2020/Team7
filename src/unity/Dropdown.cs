@@ -11,7 +11,9 @@ public class Dropdown : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+#if !UNITY_EDITOR
+        gameObject.SetActive(false);
+#endif
     }
 
     // Update is called once per frame

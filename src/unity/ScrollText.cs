@@ -21,6 +21,7 @@ public class ScrollText : MonoBehaviour
 
         m_RectTransform = playerText.GetComponent<RectTransform>();
         speed = 3f;
+        playerText.text = "";
     }
 
     // Update is called once per frame

@@ -118,7 +118,7 @@ public class MqttSub : M2MqttUnityClient
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
         }
-        else if (players.playerID == 3 && !EndGame.gameOver) // speech from player 3
+        else if (players.playerID == 3 && !Pause.isPaused && !EndGame.gameOver) // speech from player 3
         {
             receivedMsg3 = true;
             action3 = players.action;
