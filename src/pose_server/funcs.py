@@ -92,14 +92,6 @@ def player_thread(client, opWrapper, mqtt_client, mqtt_channel, debug, addr):
         movement = move(datum.poseKeypoints);
         #####MQTT SEND IT#######
         if movement == "blocking":
-            message = json.dumps({"playerID": player_num, "action": "o"})
-            mqtt_client.publish(mqtt_channel, message, qos = 1)
-        else:
-            #message = json.dumps({"player": player, "action": ""})
-            print("");
-
-            # message = json.dumps({"playerID": player_num, "action": "o"})
-            # mqtt_client.publish(mqtt_channel, message, qos = 1)
             detect_move = True;
         #else:
             #message = json.dumps({"player": player, "action": ""})

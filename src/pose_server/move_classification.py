@@ -51,20 +51,13 @@ class person:
 
 def move(human_arr):
 
-        human_count = len(human_arr);
-        #print("human number is " + str(human_count));
-        human_nums = human_arr[0];
-        #print(human_nums);
-        human = person(human_nums);
-        print_arms_blocking_head(human);
-        if is_right_hook(human):
-                return "hook"
-        if is_left_hook(human):
-                return "hook"
-        elif are_arms_blocking_head(human):
-                return "blocking";
-        else:
-                return "nothing";
+        # human_count = len(human_arr);
+        # #print("human number is " + str(human_count));
+        # human_nums = human_arr[0];
+        # #print(human_nums);
+        # human = person(human_nums);
+        # print_arms_blocking_head(human);
+
 
         try:
                 human_count = len(human_arr);
@@ -73,7 +66,11 @@ def move(human_arr):
                 #print(human_nums);
                 human = person(human_nums);
                 print_arms_blocking_head(human);
-                if are_arms_blocking_head(human):
+                if is_right_hook(human):
+                        return "hook"
+                if is_left_hook(human):
+                        return "hook"
+                elif are_arms_blocking_head(human):
                         return "blocking";
                 else:
                         return "nothing";
