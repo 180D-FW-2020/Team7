@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import os
 import socket
 import cv2
 import pickle
@@ -12,6 +13,33 @@ import matplotlib.pyplot as plt
 import numpy as np
 import time
 import signal
+import subprocess
+import zipfile
+from sys import platform
+
+if not os.path.isfile("../old/Boxing.exe"):
+    if platform == "linux":
+        if not os.path.isfile(os.path.abspath("../old/Boxing_v5.zip")):
+            print("boxing_v5.zip does not exist, exiting");
+            exit(-1);
+        subprocess.call("unzip ../old/Boxing_v5.zip -d ../old", shell=True);
+    if platform == "win32":
+        with zipfile.ZipFile("../old/Boxing.exe","r") as zip_ref:
+            zip_ref.extractall("../old/")
+    if not os.path.isfile("../old/Boxing.exe"):
+        print("Boxing.exe does not exist");
+        exit(-1);
+if platform == "linux": subprocess.call("chmod +x ../old/Boxing.exe", shell=True);
+
+
+
+
+
+if platform == "linux":
+    process_call = "wine ../old/Boxing.exe"
+elif platform == "win32":
+    process_call = "../old/Boxing.exe"
+
 
 fps_time = 0
 debug = False
@@ -56,7 +84,7 @@ if __name__ == '__main__':
         print("Error opening video stream or file")
         exit();
     frame_num = 0;
-
+    process_call = process_call + " " + str(args.player); #add player to argument
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         client_socket.connect((host, port))
@@ -64,6 +92,14 @@ if __name__ == '__main__':
         print("Host " + str(host) + " is not accepting connections");
         print("Please make sure server is accepting connections");
         exit();
+
+
+
+    if platform=="linux":
+        print("OPening boxing.exe")
+        subprocess.call(process_call + " &", shell=True);
+    if platform=="win32":
+        subprocess.call([process_call]);
 
 
     while True:
