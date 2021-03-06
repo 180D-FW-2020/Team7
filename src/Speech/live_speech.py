@@ -1,12 +1,50 @@
 """
 Send only one message for mqtt per command recognized
-Use for loop to sample audio every 5 seconds or so, 
+Use for loop to sample audio every 5 seconds or so,
 then publish mqtt if command is detected
 """
 import time
 import random
 import json
 from paho.mqtt import client as mqtt_client
+import os
+import socket
+import cv2
+import pickle
+import struct
+from datetime import datetime
+import json
+import argparse
+import logging
+import time
+import matplotlib.pyplot as plt
+import numpy as np
+import time
+import signal
+import subprocess
+import zipfile
+from sys import platform
+
+if not os.path.isfile("../old/Boxing.exe"):
+    if platform == "linux":
+        if not os.path.isfile(os.path.abspath("../old/Boxing_v5.zip")):
+            print("boxing_v5.zip does not exist, exiting");
+            exit(-1);
+        subprocess.call("unzip ../old/Boxing_v5.zip -d ../old", shell=True);
+    if platform == "win32":
+        with zipfile.ZipFile("../old/Boxing.exe","r") as zip_ref:
+            zip_ref.extractall("../old/")
+    if not os.path.isfile("../old/Boxing.exe"):
+        print("Boxing.exe does not exist");
+        exit(-1);
+if platform == "linux": subprocess.call("chmod +x ../old/Boxing.exe", shell=True);
+
+
+if platform == "linux":
+    process_call = "wine ../old/Boxing.exe 3"
+elif platform == "win32":
+    process_call = "../old/Boxing.exe 3"
+
 broker = 'broker.emqx.io'
 port = 1883
 topic = "180d/team7"
@@ -62,7 +100,12 @@ import speech_recognition as sr
 r=sr.Recognizer()
 
 # contains trains of r/p, used to keep track of current status of either resumed or paused
-previousIs = "r" 
+previousIs = "r"
+
+if platform=="linux":
+    subprocess.call(process_call + " &", shell=True);
+if platform=="win32":
+    subprocess.call([process_call]);
 
 while(True):
     text = ""
