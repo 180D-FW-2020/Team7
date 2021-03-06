@@ -55,6 +55,7 @@ def create_mqtt_channel(mqtt_channel):
 def player_thread(client, opWrapper, mqtt_client, mqtt_channel, debug, addr):
     data = b''
     fps_time = 0;
+    epoch = time.time();
     while True:
         payload_size = struct.calcsize("L")
         while len(data) < payload_size:
@@ -90,9 +91,9 @@ def player_thread(client, opWrapper, mqtt_client, mqtt_channel, debug, addr):
         #####MQTT SEND IT#######
         if movement == "blocking":
             message = json.dumps({"playerID": player_num, "action": "o"})
-            mqtt_client.publish(mqtt_channel, message, qos = 1)            
+            mqtt_client.publish(mqtt_channel, message, qos = 1)
         else:
-            #message = json.dumps({"player": player, "action": "x"})
+            message = json.dumps({"player": player, "action": ""})
             print("");
 
         if debug:
@@ -101,10 +102,8 @@ def player_thread(client, opWrapper, mqtt_client, mqtt_channel, debug, addr):
                         (10, 10),  cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                         (0, 255, 0), 2);
             cv2.imshow(player, datum.cvOutputData)
-            
+
         print("FPS: %f" % (1.0 / (time.time() - fps_time)));
         fps_time = time.time()
         if cv2.waitKey(1) == 27:
             break
-
-        

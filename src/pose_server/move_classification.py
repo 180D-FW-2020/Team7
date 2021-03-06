@@ -46,8 +46,8 @@ class person:
                         tmp_body_part = body_part(x,y);
                         self.body_parts.append(tmp_body_part);
                 #print("Size of human ppl " + str(len(body_parts)));
-        
-                
+
+
 
 def move(human_arr):
         human_count = len(human_arr);
@@ -56,7 +56,9 @@ def move(human_arr):
         #print(human_nums);
         human = person(human_nums);
         print_arms_blocking_head(human);
-        if are_arms_blocking_head(human):
+        if is_right_jab(human):
+                return "hook"
+        elif are_arms_blocking_head(human):
                 return "blocking";
         else:
                 return "nothing";
@@ -142,3 +144,15 @@ def are_arms_blocking_head(human):
                 print("\t#############Face Block Detected###############");
                 return True
         return False
+def is_right_jab(human):
+        if is_medial_y(human.body_parts[Nose],human.body_parts[RElbow],human.body_parts[RWrist]) and check_x_plane(human.body_parts[Nose], human.body_parts[LWrist]):
+                print("\t#############Right Jab Detected###############");
+                return True
+        else:
+                return False;
+def is_right_cross(human):
+        if is_medial_y(human.body_parts[RShoulder],human.body_parts[RElbow],human.body_parts[RWrist]) and check_x_less(human.body_parts[Nose],human.body_parts[RElbow]):
+                print("\t#############Right Cross Detected###############");
+                return True
+        else:
+                return False;
