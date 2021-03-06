@@ -91,20 +91,16 @@ def player_thread(client, opWrapper, mqtt_client, mqtt_channel, debug, addr):
         #print("Body keypoints: \n" + str(datum.poseKeypoints))
         movement = move(datum.poseKeypoints);
         #####MQTT SEND IT#######
-        if movement == "hook":
-            message = json.dumps({"playerID": player_num, "action": "h"})
-
         if movement == "blocking":
             message = json.dumps({"playerID": player_num, "action": "o"})
-
-            #mqtt_client.publish(mqtt_channel, message, qos = 1)
+            mqtt_client.publish(mqtt_channel, message, qos = 1)
         else:
-            message = json.dumps({"player": player, "action": ""})
+            #message = json.dumps({"player": player, "action": ""})
             print("");
-            detect_move = True;
+
             # message = json.dumps({"playerID": player_num, "action": "o"})
             # mqtt_client.publish(mqtt_channel, message, qos = 1)
-
+            detect_move = True;
         #else:
             #message = json.dumps({"player": player, "action": ""})
             #print("");
@@ -112,7 +108,7 @@ def player_thread(client, opWrapper, mqtt_client, mqtt_channel, debug, addr):
         if int(time.time()) % 5 == 0:
             if reg == True:
                 if detect_move == True:
-                    #message = json.dumps({"playerID": player_num, "action": "o"})
+                    message = json.dumps({"playerID": player_num, "action": "o"})
                     detect_move = False;
                 else:
                     message = json.dumps({"playerID": player_num, "action": ""})
@@ -121,6 +117,8 @@ def player_thread(client, opWrapper, mqtt_client, mqtt_channel, debug, addr):
         if int(time.time()) % 6 == 0:
             reg = True;
             detect_move = False;
+
+
         if debug:
             cv2.putText(datum.cvOutputData,
                         "FPS: %f" % (1.0 / (time.time() - fps_time)),
