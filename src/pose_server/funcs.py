@@ -93,15 +93,15 @@ def player_thread(client, opWrapper, mqtt_client, mqtt_channel, debug, addr):
         #####MQTT SEND IT#######
         if movement == "hook":
             message = json.dumps({"playerID": player_num, "action": "h"})
-            detect_move = True;
+
         if movement == "blocking":
             message = json.dumps({"playerID": player_num, "action": "o"})
-            detect_move = True;
+
             #mqtt_client.publish(mqtt_channel, message, qos = 1)
         else:
             message = json.dumps({"player": player, "action": ""})
             print("");
-
+            detect_move = True;
             # message = json.dumps({"playerID": player_num, "action": "o"})
             # mqtt_client.publish(mqtt_channel, message, qos = 1)
 
