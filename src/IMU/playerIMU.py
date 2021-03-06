@@ -6,7 +6,7 @@ import math
 import IMU
 import argparse
 from collections import deque
-
+import threading
 import random
 import json
 from paho.mqtt import client as mqtt_client
@@ -88,6 +88,7 @@ def _gyro(raw):
 
 ############     won't deal with magnetometer. fuck the magnetometer.     ############
 
+
 def setup():
     global PRINT, ID 
 
@@ -126,15 +127,13 @@ def loop():
     pubReg = False
     punchTime = time.perf_counter()
     
-    iter = 0
-
     client = connect_mqtt()
     action = ""
 
+    sync = time.time()
     while 1:
-        sync = int(time.time())
+        
         client.loop_start()
-
         #Read the accelerometer,gyroscope and magnetometer values
         _ACCx = IMU.readACCx(); _ACCy = IMU.readACCy(); _ACCz = IMU.readACCz()
         _GYRx = IMU.readGYRx(); _GYRy = IMU.readGYRy(); _GYRz = IMU.readGYRz()
@@ -161,7 +160,6 @@ def loop():
                 if avaX > cXAcc and avgX > cGamma: # and avgZ > cAlpha: 
                     print("Cross!", end='\n')
                     punchReg = True
-                    pubReg = True
                     hitcounter += 1
                     action = "c"
                     punchTime = time.perf_counter()
@@ -169,7 +167,6 @@ def loop():
                 if avaZ < hZAcc and avgZ > hAlpha and avgX < hGamma:
                     print("Hook!", end='\n')
                     punchReg = True
-                    pubReg = True
                     hitcounter += 1
                     action = "h"
                     punchTime = time.perf_counter()
@@ -177,16 +174,12 @@ def loop():
 
             if time.perf_counter() - punchTime >= 1:
                 punchReg = False
-        if sync % 5 == 4 and action == "":
-            pubReg = True
 
         if MQTT:
-            if sync % 5 == 0 and pubReg:
+            if time.time() - sync > 5:
                 publish(client, action, ID)
-                pubReg = False
+                sync = time.time()
                 action = ""
-
-        iter += 1
 
 
 

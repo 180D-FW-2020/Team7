@@ -11,11 +11,14 @@ def get_features(series, generate_feature_names=False):
     if generate_feature_names:
         return ['max', 'min', 'range', 'mean', 'std']
     features = []
-    features.append(max(series))
-    features.append(min(series))
-    features.append(max(series) - min(series))
-    features.append(series.mean())
-    features.append(series.std())
+    if series: # CANNOT iterate on empty series. I don't know why it's pushing empty data.
+        features.append(max(series))
+        features.append(min(series))
+        features.append(max(series) - min(series))
+        features.append(series.mean())
+        features.append(series.std())
+    else:
+        features = [0,0,0,0,0] 
     return features
 
 
