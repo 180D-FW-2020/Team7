@@ -91,8 +91,13 @@ def player_thread(client, opWrapper, mqtt_client, mqtt_channel, debug, addr):
         #print("Body keypoints: \n" + str(datum.poseKeypoints))
         movement = move(datum.poseKeypoints);
         #####MQTT SEND IT#######
-        if movement == "blocking":
+        if movement == "hook" and detect_move == False:
             detect_move = True;
+            action = 'h'
+        if movement == "blocking" and detect_move == False:
+            detect_move = True;
+            action = 'o'
+
         #else:
             #message = json.dumps({"player": player, "action": ""})
             #print("");
@@ -100,7 +105,7 @@ def player_thread(client, opWrapper, mqtt_client, mqtt_channel, debug, addr):
         if int(time.time()) % 5 == 0:
             if reg == True:
                 if detect_move == True:
-                    message = json.dumps({"playerID": player_num, "action": "o"})
+                    message = json.dumps({"playerID": player_num, "action": action})
                     detect_move = False;
                 else:
                     message = json.dumps({"playerID": player_num, "action": ""})
