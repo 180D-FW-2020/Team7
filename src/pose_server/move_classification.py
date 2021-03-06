@@ -58,9 +58,9 @@ def move(human_arr):
         human = person(human_nums);
         print_arms_blocking_head(human);
         if is_right_cross(human):
-                return "Cross"
-        elif is_right_jab(human):
-                return "hook"
+                return "cross"
+        if is_left_cross(human):
+                return "cross"
         elif are_arms_blocking_head(human):
                 return "blocking";
         else:
@@ -174,6 +174,12 @@ def not_null(part):
 def is_right_cross(human):
         if is_medial_y(human.body_parts[RShoulder],human.body_parts[RElbow],human.body_parts[RWrist]) and check_x_less(human.body_parts[Nose],human.body_parts[RElbow]) and not_null(human.body_parts[RElbow]) and not_null(human.body_parts[RShoulder]) and not_null(human.body_parts[RWrist]):
                 print("\t#############Right Cross Detected###############");
+                return True
+        else:
+                return False;
+def is_left_cross(human):
+        if is_medial_y(human.body_parts[LShoulder],human.body_parts[LElbow],human.body_parts[LWrist]) and check_x_less(human.body_parts[Nose],human.body_parts[LElbow]) and not_null(human.body_parts[LElbow]) and not_null(human.body_parts[LShoulder]) and not_null(human.body_parts[LWrist]):
+                print("\t#############Left Cross Detected###############");
                 return True
         else:
                 return False;
