@@ -19,6 +19,10 @@ public class ChooseCamera : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+#if UNITY_EDITOR
         playerID = Dropdown.dropdownVal + 1;
+#else
+        playerID = SelectPlayer.playerID;
+#endif
     }
 }
