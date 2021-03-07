@@ -66,8 +66,7 @@ def move(human_arr):
                 #print(human_nums);
                 human = person(human_nums);
                 print_arms_blocking_head(human);
-                if is_right_hook(human)
-                :
+                if is_right_hook(human):
                         return "hook"
                 if is_left_hook(human):
                         return "hook"
