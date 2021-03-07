@@ -23,7 +23,7 @@ def _gyro(raw):
 
 def countdown(t):
     while t: 
-        mins, secs = divmod(t, 60) 
+        secs = divmod(t, 60)[1] 
         timer = f'{secs:02d}' 
         print(timer, end="  \r") 
         time.sleep(1) 
