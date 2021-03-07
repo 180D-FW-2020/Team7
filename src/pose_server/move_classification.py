@@ -60,6 +60,7 @@ def move(human_arr):
 
 
         try:
+
                 human_count = len(human_arr);
                 #print("human number is " + str(human_count));
                 human_nums = human_arr[0];
@@ -86,7 +87,7 @@ def print_arms_blocking_head(human):
         print("\tLeft Elbow: (" + str(human.body_parts[LElbow].x) + "," + str(human.body_parts[LElbow].y) + ")")
         print("\tRight Elbow: (" + str(human.body_parts[RElbow].x) + "," + str(human.body_parts[RElbow].y) + ")")
         print("\tNose: (" + str(human.body_parts[Nose].x) + "," + str(human.body_parts[Nose].y) + ")")
-
+        print("####")
 
 
 ##########################Basic Coordinate Checks ##########################
