@@ -1,2 +1,11 @@
 adafruit_lsm9ds1.py
 calibrateBerryIMU.py
+modelGen.ipynb
+
+
+.ipynb_checkpoints/
+__pychache__/
+data/
+hook/
+cross/
+negative/
