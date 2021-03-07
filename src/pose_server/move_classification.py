@@ -66,7 +66,8 @@ def move(human_arr):
                 #print(human_nums);
                 human = person(human_nums);
                 print_arms_blocking_head(human);
-                if is_right_hook(human):
+                if is_right_hook(human)
+                :
                         return "hook"
                 if is_left_hook(human):
                         return "hook"
@@ -175,7 +176,7 @@ def is_right_hook(human):
         else:
                 return False;
 def is_left_hook(human):
-        if is_medial_y(human.body_parts[LShoulder],human.body_parts[LElbow],human.body_parts[LWrist]) and check_x_less(human.body_parts[Nose],human.body_parts[LElbow]) and not_null(human.body_parts[LElbow]) and not_null(human.body_parts[LShoulder]) and not_null(human.body_parts[LWrist]):
+        if is_medial_y(human.body_parts[LShoulder],human.body_parts[LElbow],human.body_parts[LWrist]) and check_x_less(human.body_parts[Nose],human.body_parts[LElbow]) and not_null(human.body_parts[LElbow]) and not_null(human.body_parts[LShoulder]) and not_null(human.body_parts[LWrist]) and check_y_less(human.body_parts[RElbow], check_y_less(human.body_parts[RWrist])):
                 print("\t#############Left Hook Detected###############");
                 return True
         else:
