@@ -36,17 +36,17 @@ RESIZE_OUT_RATIO = 2.0
 def str2bool(v):
     return v.lower() in ("yes", "true", "t", "1")
 def get_mqtt_header():
-    return time.strftime("H%H-M%M-S%S", time.localtime()) + ":::";
+    return time.strftime("H%H-M%M-S%S", time.localtime()) + ":::"
 def on_connect(client, userdata, flags, rc):
     print("Connection Returned result: " + str(rc))
 def on_disconnect(client, userdata, rc):
     if rc != 0:
-        print("Unexpected Disconnect");
+        print("Unexpected Disconnect")
     else:
-        print("Expected Disconnect");
+        print("Expected Disconnect")
 def on_message(client, userdata, message):
     #We should use this for start game and end game and all that, ####REMMEBER THIS LATER
-    print("#######Received Message###########");
+    print("#######Received Message###########")
     print(str(message.payload))
 
 
@@ -55,7 +55,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='tf-pose-estimation realtime webcam')
     parser.add_argument('--input', default='camera')
     parser.add_argument('--video', type=str, default='')
-    parser.add_argument('--debug', default='false');
+    parser.add_argument('--debug', default='false')
     parser.add_argument('--mqtt', type=str, default='')
     args = parser.parse_args()
     if(args.input.lower() == "video"):
@@ -124,7 +124,7 @@ if __name__ == '__main__':
             cv2.putText(image,
                         "FPS: %f" % (1.0 / (time.time() - fps_time)),
                         (10, 10),  cv2.FONT_HERSHEY_SIMPLEX, 0.5,
-                        (0, 255, 0), 2);
+                        (0, 255, 0), 2)
 
             cv2.imshow('tf-pose-estimation result VIDEO/WEBCAM', image)
         fps_time = time.time()

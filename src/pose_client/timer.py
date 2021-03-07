@@ -2,13 +2,13 @@
 import time
 
 
-reg = False;
+reg = False
 
 while True:
-    cnt = time.time();
+    cnt = time.time()
     if cnt % 5 == 0:
-        reg = True;
+        reg = True
         if reg:
-            print(int(cnt % 60));
+            print(int(cnt % 60))
     if cnt % 5 == 1:
         reg = False

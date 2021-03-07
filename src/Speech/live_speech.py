@@ -99,7 +99,7 @@ def run():
 
 def countdown(t):
     while t: 
-        mins, secs = divmod(t, 60) 
+        secs = divmod(t, 60)[1] 
         timer = f'{secs:02d}' 
         print(f"Mic is blocked for {timer} seconds", end="  \r") 
         time.sleep(1) 
