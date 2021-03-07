@@ -104,6 +104,7 @@ if __name__ == '__main__':
         #print(frame_num)
         if frame_num % 5 == 0:
             ok, frame = device.read()
+#            frame = cv2.flip(frame, 1)
             frame = cv2.resize(frame,(480,480))
             #frame = cv2.resize(frame, (0,0), fx = 0.5, fy = 0.5)
             data = pickle.dumps(frame)
