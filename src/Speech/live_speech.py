@@ -24,26 +24,27 @@ import signal
 import subprocess
 import zipfile
 from sys import platform
+import speech_recognition as sr
 
 if not os.path.isfile("../old/Boxing.exe"):
     if platform == "linux":
         if not os.path.isfile(os.path.abspath("../old/Boxing_v5.zip")):
-            print("boxing_v5.zip does not exist, exiting");
-            exit(-1);
-        subprocess.call("unzip ../old/Boxing_v5.zip -d ../old", shell=True);
+            print("boxing_v5.zip does not exist, exiting")
+            exit(-1)
+        subprocess.call("unzip ../old/Boxing_v5.zip -d ../old", shell=True)
     if platform == "win32":
-        with zipfile.ZipFile("../old/Boxing.exe","r") as zip_ref:
+        with zipfile.ZipFile("../old/Boxing_v5.zip","r") as zip_ref:
             zip_ref.extractall("../old/")
     if not os.path.isfile("../old/Boxing.exe"):
-        print("Boxing.exe does not exist");
-        exit(-1);
-if platform == "linux": subprocess.call("chmod +x ../old/Boxing.exe", shell=True);
+        print("Boxing.exe does not exist")
+        exit(-1)
+if platform == "linux": subprocess.call("chmod +x ../old/Boxing.exe", shell=True)
 
 
 if platform == "linux":
     process_call = "wine ../old/Boxing.exe 3"
 elif platform == "win32":
-    process_call = "../old/Boxing.exe 3"
+    process_call = "../old/Boxing.exe"
 
 broker = 'broker.emqx.io'
 port = 1883
@@ -63,7 +64,7 @@ def connect_mqtt():
     client.connect(broker, port)
     return client
 
-action = ''
+
 def publish(client, action):
      while True:
          time.sleep(1)
@@ -96,64 +97,78 @@ def run():
     #client.loop_start()
     publish(client, action)
 
-import speech_recognition as sr
-r=sr.Recognizer()
+def countdown(t):
+    while t: 
+        mins, secs = divmod(t, 60) 
+        timer = f'{secs:02d}' 
+        print(f"Mic is blocked for {timer} seconds", end="  \r") 
+        time.sleep(1) 
+        t -= 1
+    print( "\nMic is open!")
 
-# contains trains of r/p, used to keep track of current status of either resumed or paused
-previousIs = "r"
 
-if platform=="linux":
-    subprocess.call(process_call + " &", shell=True);
-if platform=="win32":
-    subprocess.call([process_call]);
 
-while(True):
-    text = ""
-    action = ''
-    print("Please Talk!")
-    with sr.Microphone() as source:
-        spoken = True
-        canPublish = False
-        audio_data=r.record(source, duration=3)
-        print("Recognizing...")
-        try:
-            text=r.recognize_google(audio_data)
-        except:
-            spoken = False
-            print("waiting for next comand...")
 
-        if(spoken):
-            print("You said: {}".format(text))
-            # find if certain words exist within said phrase
-            if(text.find("restart") != -1):
-                canPublish = True
-                action = 'r'
-                print("Restarting")
-            elif(text.find("begin") != -1 or text.find("start") != -1):
-                canPublish = True
-                action = 'g'
-                print("The game will start!")
-            elif(text.find("pause") != -1):
-                if(previousIs[len(previousIs) - 1] == 'r'):
-                    canPublish = True
-                    action = 'p'
-                    previousIs += 'p'
-                    print("Paused")
-            elif(text.find("resume") != -1):
-                if(previousIs[len(previousIs) - 1] == 'p'):
-                    canPublish = True
-                    action = 'p'
-                    previousIs += 'r'
-                    print("Resumed")
-            elif(text.find("quit") != -1):
-                canPublish = True
-                action = 'q'
-                print("Game quitted")
-            else:
-                canPublish = True
-                action = text
-                print("Sending comments")
+if __name__ == "__main__":
+    # contains trains of r/p, used to keep track of current status of either resumed or paused
+    previousIs = "r"
+    r=sr.Recognizer()
+    if platform=="linux":
+        subprocess.run(process_call + " &", shell=True)
+    if platform=="win32":
+        subprocess.Popen([process_call])
 
-            if(canPublish):
-                if __name__ == '__main__':
-                    run()
+
+    countdown(10)
+    while(True):
+
+        text = ""
+        action = ''
+
+        if input("Press M to open mic for 3 seconds: ").lower() == "m":
+            with sr.Microphone() as source:
+                spoken = True
+                canPublish = False
+                print("Speak!")
+                audio_data=r.record(source, duration=3)
+                
+                try:
+                    text=r.recognize_google(audio_data)
+                except:
+                    spoken = False
+                    print("Waiting for next command...")
+
+                if(spoken):
+                    print("You said: {}".format(text))
+                    # find if certain words exist within said phrase
+                    if(text.find("restart") != -1):
+                        canPublish = True
+                        action = 'r'
+                        print("Restarting")
+                    elif(text.find("begin") != -1 or text.find("start") != -1):
+                        canPublish = True
+                        action = 'g'
+                        print("The game will start!")
+                    elif(text.find("pause") != -1):
+                        if(previousIs[len(previousIs) - 1] == 'r'):
+                            canPublish = True
+                            action = 'p'
+                            previousIs += 'p'
+                            print("Paused")
+                    elif(text.find("resume") != -1):
+                        if(previousIs[len(previousIs) - 1] == 'p'):
+                            canPublish = True
+                            action = 'p'
+                            previousIs += 'r'
+                            print("Resumed")
+                    elif(text.find("quit") != -1):
+                        canPublish = True
+                        action = 'q'
+                        print("Game quit")
+                    else:
+                        canPublish = True
+                        action = text
+                        print(f"Sending comments: {text}")
+
+                    if(canPublish):
+                        run()
