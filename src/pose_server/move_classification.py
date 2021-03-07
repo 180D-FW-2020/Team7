@@ -111,13 +111,13 @@ def check_y_plane(body_part1, body_part2):
 
 
 def check_x_less(body_part1, body_part2):
-    if body_part1.y < body_part2.y:
+    if body_part1.x < body_part2.x:
         return True
     else:
         return False
 def check_y_less(body_part1, body_part2):
     #invert because the biggger the number the lower it is
-    if body_part1.x < body_part2.x:
+    if body_part1.y < body_part2.y:
         return True
     else:
         return False
@@ -125,10 +125,10 @@ def check_y_less(body_part1, body_part2):
 
 #Check whether body_part2 is between 1 & 3
 def is_medial_x(body_part1, body_part2, body_part3):
-    return in_range(body_part1.y, body_part2.y, body_part3.y)
+    return in_range(body_part1.x, body_part2.x, body_part3.x)
 
 def is_medial_y(body_part1, body_part2, body_part3):
-    return in_range(body_part1.x, body_part2.x, body_part3.x)
+    return in_range(body_part1.y, body_part2.y, body_part3.y)
 
 def in_range(x, y, z):
     if x < z:
@@ -189,25 +189,26 @@ def not_null(part):
         return False
 
 def is_right_hook(human):
-    if is_medial_y(human.body_parts[RShoulder],human.body_parts[RElbow],human.body_parts[RWrist]) \
-        and check_x_less(human.body_parts[Nose], human.body_parts[RElbow]) \
+    if is_medial_x(human.body_parts[RElbow],human.body_parts[RShoulder],human.body_parts[RWrist]) \
+        and check_y_less(human.body_parts[RShoulder], human.body_parts[RWrist]) \
             and not_null(human.body_parts[RElbow]) \
                 and not_null(human.body_parts[RShoulder]) \
                     and not_null(human.body_parts[RWrist]) \
-                        and check_y_less(human.body_parts[LElbow], human.body_parts[LWrist]):
+                        and check_y_less(human.body_parts[LWrist], human.body_parts[LElbow]):
         print("\t#############Right Hook Detected###############")
         return True
     else:
         return False
 
 def is_left_hook(human):
-    if is_medial_y(human.body_parts[LShoulder],human.body_parts[LElbow],human.body_parts[LWrist]) \
-        and check_x_less(human.body_parts[Nose],human.body_parts[LElbow]) \
+    if is_medial_x(human.body_parts[LElbow],human.body_parts[LShoulder],human.body_parts[LWrist]) \
+        and check_y_less(human.body_parts[LShoulder],human.body_parts[LWrist]) \
             and not_null(human.body_parts[LElbow]) \
                 and not_null(human.body_parts[LShoulder]) \
                     and not_null(human.body_parts[LWrist]) \
-                        and check_y_less(human.body_parts[RElbow], human.body_parts[RWrist]):
+                        and check_y_less(human.body_parts[RWrist], human.body_parts[RElbow]):
         print("\t#############Left Hook Detected###############")
         return True
     else:
         return False
+
