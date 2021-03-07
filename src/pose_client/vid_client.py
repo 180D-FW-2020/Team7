@@ -81,7 +81,7 @@ if __name__ == '__main__':
         print("Error opening video stream or file")
         exit()
     frame_num = 0 
-    process_call = process_call + " " + str(args.player)  #add player to argument
+    #process_call = process_call + " " + str(args.player)  #add player to argument
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         client_socket.connect((host, port))
@@ -93,10 +93,10 @@ if __name__ == '__main__':
 
 
     if platform=="linux":
-        print("OPening boxing.exe")
+        print("Opening boxing.exe")
         subprocess.run(process_call + " &", shell=True)
     if platform=="win32":
-        subprocess.Popen([process_call])
+        subprocess.Popen([process_call, str(args.player)])
 
 
     while True:
