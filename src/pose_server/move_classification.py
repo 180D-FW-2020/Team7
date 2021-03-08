@@ -167,10 +167,10 @@ def is_left_arm_straight_down(human):
         print("Left Arm is straight down")
 
 def are_arms_blocking_head(human):
-    if is_medial_y(human.body_parts[LElbow],human.body_parts[Nose],human.body_parts[RElbow]) \
-        and is_medial_y(human.body_parts[LWrist], human.body_parts[Nose], human.body_parts[RWrist]) \
-            and is_medial_x(human.body_parts[LWrist],human.body_parts[Nose],human.body_parts[LElbow]) \
-                and is_medial_x(human.body_parts[RWrist],human.body_parts[Nose],human.body_parts[RElbow]):
+    if is_medial_x(human.body_parts[LElbow],human.body_parts[Nose],human.body_parts[RElbow]) \
+        and is_medial_x(human.body_parts[LWrist], human.body_parts[Nose], human.body_parts[RWrist]) \
+            and is_medial_y(human.body_parts[LWrist],human.body_parts[Nose],human.body_parts[LElbow]) \
+                and is_medial_y(human.body_parts[RWrist],human.body_parts[Nose],human.body_parts[RElbow]):
         print("\t#############Face Block Detected###############")
         return True
     return False
