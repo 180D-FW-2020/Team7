@@ -17,25 +17,6 @@ import subprocess
 import zipfile
 from sys import platform
 
-if not os.path.isfile("../old/Boxing.exe"):
-    if platform == "linux":
-        if not os.path.isfile(os.path.abspath("../old/Boxing_v5.zip")):
-            print("boxing_v5.zip does not exist, exiting")
-            exit(-1)
-        subprocess.call("unzip ../old/Boxing_v5.zip -d ../old", shell=True)
-    if platform == "win32":
-        with zipfile.ZipFile("../old/Boxing_v5.zip","r") as zip_ref:
-            zip_ref.extractall("../old/")
-    if not os.path.isfile("../old/Boxing.exe"):
-        print("Boxing.exe does not exist")
-        exit(-1)
-if platform == "linux": subprocess.call("chmod +x ../old/Boxing.exe", shell=True)
-
-
-if platform == "linux":
-    process_call = "wine ../old/Boxing.exe 3"
-elif platform == "win32":
-    process_call = "../old/Boxing.exe"
 
 
 fps_time = 0
@@ -46,32 +27,36 @@ h = 480
 RESIZE_OUT_RATIO = 2.0
 host = '72.134.122.226'# THIS IS CONSTANT
 port = 5001 #SO IS THIS
+unity = False;
  #THIS IS CONSTANT
 def str2bool(v):
     return v.lower() in ("yes", "true", "t", "1")
-signal_catch = False 
+signal_catch = False
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='realtime broadcasting webcam')
     parser.add_argument('--input', default='camera')
     parser.add_argument('--video', type=str, default='')
-    parser.add_argument('--debug', default='false') 
-    parser.add_argument('--player', type=int, default=-1) 
-    parser.add_argument('--host', type=str, default='') 
-    parser.add_argument('--port', type=int, default=-1) 
+    parser.add_argument('--debug', default='false')
+    parser.add_argument('--unity', default='false')
+    parser.add_argument('--player', type=int, default=-1)
+    parser.add_argument('--host', type=str, default='')
+    parser.add_argument('--port', type=int, default=-1)
     args = parser.parse_args()
     if(args.port != -1):
         print("Changing host port to " + str(args.port))
-        port = args.port 
+        port = args.port
     if(args.host.lower() != ""):
-        print("Changeing Host addr to " + args.host.lower()) 
-        host = args.host.lower() 
+        print("Changeing Host addr to " + args.host.lower())
+        host = args.host.lower()
     if(args.input.lower() == "video"):
         use_video = True
     if(args.debug.lower() == "true"):
         debug = True
+    if(args.unity.lower() == "true"):
+        unity = True;
     if not (args.player == 1 or args.player == 2):
-        print("Please input \"--player 1\" OR \"--player 2") 
-        exit() 
+        print("Please input \"--player 1\" OR \"--player 2")
+        exit()
 
     if use_video:
         device = cv2.VideoCapture(args.video)
@@ -80,23 +65,44 @@ if __name__ == '__main__':
     if not (device.isOpened()):
         print("Error opening video stream or file")
         exit()
-    frame_num = 0 
+    frame_num = 0
     #process_call = process_call + " " + str(args.player)  #add player to argument
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         client_socket.connect((host, port))
     except:
-        print("Host " + str(host) + " is not accepting connections") 
-        print("Please make sure server is accepting connections") 
-        exit() 
+        print("Host " + str(host) + " is not accepting connections")
+        print("Please make sure server is accepting connections")
+        exit()
 
 
+    if unity:
 
-    if platform=="linux":
-        print("Opening boxing.exe")
-        subprocess.run(process_call + " &", shell=True)
-    if platform=="win32":
-        subprocess.Popen([process_call, str(args.player)])
+        if not os.path.isfile("../old/Boxing.exe"):
+            if platform == "linux":
+                if not os.path.isfile(os.path.abspath("../old/Boxing_v5.zip")):
+                    print("boxing_v5.zip does not exist, exiting")
+                    exit(-1)
+                subprocess.call("unzip ../old/Boxing_v5.zip -d ../old", shell=True)
+            if platform == "win32":
+                with zipfile.ZipFile("../old/Boxing_v5.zip","r") as zip_ref:
+                    zip_ref.extractall("../old/")
+                if not os.path.isfile("../old/Boxing.exe"):
+                    print("Boxing.exe does not exist")
+                    exit(-1)
+        if platform == "linux": subprocess.call("chmod +x ../old/Boxing.exe", shell=True)
+
+        if platform == "linux":
+            process_call = "wine ../old/Boxing.exe 3"
+        elif platform == "win32":
+            process_call = "../old/Boxing.exe"
+
+
+        if platform=="linux":
+            print("Opening boxing.exe")
+            subprocess.run(process_call + " &", shell=True)
+        if platform=="win32":
+            subprocess.Popen([process_call, str(args.player)])
 
 
     while True:
@@ -123,16 +129,16 @@ if __name__ == '__main__':
             current_time = now.strftime("%M:%S")
             print("\nSent vid stream frame to " + str(host))
             print("\tCurrent Time " + str(current_time))
-            print("\tCurrent frame:" + str(frame_num)) 
+            print("\tCurrent frame:" + str(frame_num))
             print("\tFrames being sent at FPS: %f" % (1.0 / (time.time() - fps_time)))
 
             if(signal_catch == True):
-                exit(0) 
+                exit(0)
             if debug:
                 cv2.putText(frame,
                             "FPS: %f" % (1.0 / (time.time() - fps_time)),
                             (10, 10),  cv2.FONT_HERSHEY_SIMPLEX, 0.5,
-                            (0, 255, 0), 2) 
+                            (0, 255, 0), 2)
 
                 cv2.imshow('tf-pose-estimation result VIDEO/WEBCAM', frame)
                 if cv2.waitKey(1) == 27:
