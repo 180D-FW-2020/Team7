@@ -118,25 +118,24 @@ if __name__ == "__main__":
     if(args.unity.lower() == "true"):
         unity = True;
         if unity:
+            if not os.path.isfile("../old/Boxing.exe"):
+                if platform == "linux":
+                    if not os.path.isfile(os.path.abspath("../old/Boxing_v5.zip")):
+                        print("boxing_v5.zip does not exist, exiting")
+                        exit(-1)
+                    subprocess.call("unzip ../old/Boxing_v5.zip -d ../old", shell=True)
+                if platform == "win32":
+                    with zipfile.ZipFile("../old/Boxing_v5.zip","r") as zip_ref:
+                        zip_ref.extractall("../old/")
+                    if not os.path.isfile("../old/Boxing.exe"):
+                        print("Boxing.exe does not exist")
+                        exit(-1)
+            if platform == "linux": subprocess.call("chmod +x ../old/Boxing.exe", shell=True)
 
-        if not os.path.isfile("../old/Boxing.exe"):
             if platform == "linux":
-                if not os.path.isfile(os.path.abspath("../old/Boxing_v5.zip")):
-                    print("boxing_v5.zip does not exist, exiting")
-                    exit(-1)
-                subprocess.call("unzip ../old/Boxing_v5.zip -d ../old", shell=True)
-            if platform == "win32":
-                with zipfile.ZipFile("../old/Boxing_v5.zip","r") as zip_ref:
-                    zip_ref.extractall("../old/")
-                if not os.path.isfile("../old/Boxing.exe"):
-                    print("Boxing.exe does not exist")
-                    exit(-1)
-        if platform == "linux": subprocess.call("chmod +x ../old/Boxing.exe", shell=True)
-
-        if platform == "linux":
-            process_call = "wine ../old/Boxing.exe 3"
-        elif platform == "win32":
-            process_call = "../old/Boxing.exe"
+                process_call = "wine ../old/Boxing.exe 3"
+            elif platform == "win32":
+                process_call = "../old/Boxing.exe"
 
 
         if platform=="linux":
