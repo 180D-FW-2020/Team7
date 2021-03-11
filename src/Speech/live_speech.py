@@ -115,6 +115,7 @@ if __name__ == "__main__":
     previousIs = "r"
     parser = argparse.ArgumentParser(description='realtime broadcasting webcam')
     parser.add_argument('--unity', default='false')
+    args = parser.parse_args()
     if(args.unity.lower() == "true"):
         unity = True;
         if unity:
