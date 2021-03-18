@@ -1,7 +1,4 @@
 # IMU - Gesture Recognition #
-## The IMU detects whether the user has crossed certain thresholds in acceleration and rotation
- to determine the user's inputted move. Sends messages on a 5s timer to account for
- network latency in video processing. ##
 
 ## Dependencies ##
 See requirements.txt
