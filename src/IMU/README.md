@@ -46,9 +46,13 @@ IMU setup complete.
 ## IMU Usage
 
 To run, use the command
-> python playerIMU.py --player <playerID> [<debug <DEBUG>]
-
+'''
+python playerIMU.py --player <playerID> [debug <DEBUG>]
+'''
+where the flag <playerID> should be populated by the value 1/2 (according to player number)
+and where the flag <DEBUG> should only be set True if the player wants to see data output.
 
 Hold the IMU in your fist such that the x-axis is parallel to your extended arm
 (ie, the z-axis is normal to the back of your hand).
 
+Threshold values can be changed within the code if necessary.
