@@ -46,9 +46,9 @@ IMU setup complete.
 ## IMU Usage
 
 To run, use the command
-'''
+```
 python playerIMU.py --player <playerID> [debug <DEBUG>]
-'''
+```
 where the flag <playerID> should be populated by the value 1/2 (according to player number)
 and where the flag <DEBUG> should only be set True if the player wants to see data output.
 
