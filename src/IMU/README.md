@@ -22,7 +22,7 @@ Threshold values can be changed within the code if necessary.
 
 ## Sources ##
 * Machine learning feature extraction, model generation, etc. based on [Jennifer Wang's Gesture Recognition Magic Wand](https://github.com/jewang/gesture-demo)
-* IMU liibraries from [Ozzmaker](https://github.com/ozzmaker/BerryIMU)
+* IMU libraries from [Ozzmaker](https://github.com/ozzmaker/BerryIMU)
 
 # Code Breakdown
 | File | Description |
