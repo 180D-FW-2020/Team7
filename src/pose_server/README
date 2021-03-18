@@ -1,0 +1,37 @@
+#########THIS IS THE README FOR pose_server/vid_server.py
+
+REQUIREMENTS:
+These are the following python packages that are needed to run the vid_server.py. Please make sure they are installed on your computer
+
+ threading
+ socket
+ cv2
+ numpy as np
+ time
+ pickle
+ struct
+ datetime
+ sys
+ os
+ argparse
+ json
+ argparse
+ logging
+ matplotlib
+ numpy as np
+ paho.mqtt.client
+ openpose 
+
+
+
+
+
+RUNNING:
+
+python vid_server.py --mqtt ece180/team7
+
+NOTE:
+This program is ONLY for Ken Suzuki's computer, if you would like to port it, do so at your own risk. This is the backend of the server for the vid_client script that will accept incoming transmissions and do inference detection on them using openpose then transmitting that information to the MQTT broker/channel after --mqtt
+
+BUGS:
+If there's a packet that's invalid, that socket will hang,since its technically still a valid connection, there won't be an ack timeout, however you will need to close your client and restart. The invalid packets happen when the windows bit bug comes up OR you're sending garbage to the server

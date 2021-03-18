@@ -1,0 +1,36 @@
+#########THIS IS THE README FOR pose_client/vid_client.py
+
+REQUIREMENTS:
+These are the following python packages that are needed to run the vid_client.py. Please make sure they are installed on your computer
+
+ os
+ socket
+ cv2
+ pickle
+ struct
+ datetime
+ json
+ argparse
+ logging
+ time
+ matplotlib.pyplot as plt
+ numpy as np
+ time
+ signal
+ subprocess
+ zipfile
+ sys
+
+Also make sure you are either running Linux with Wine or Windows if you want to use the user Unity GUI and you have downloaded the entire Team7 git repo
+
+RUNNING:
+
+python vid_client.py --player {player_num} [optional] --unity {true|false}
+
+When you run this your camera should be captured and you should see text appearing on your screen that willbe outputting transmission information
+
+If you have --unity set to true, a unity player login will pop up and you will be able to see the game. The reason it is defaulted to false is because of Mac OS X not having Wine and not being native windows. For this reason it is advisable that only Linux w/wine or Windows run with unity.
+
+BUGS:
+Some Windows computers have a bit tranmission error and will not format the bits being sent correctly, it is unknown how to remedy this issue, but it has only happened once and has gone away since then.
+
