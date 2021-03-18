@@ -29,7 +29,7 @@ Threshold values can be changed within the code if necessary.
 | `playerIMU.py` | Connects to the client and runs the gesture classification code. |
 | `modelGen.py` | Code used in Jupyter Notebook to generate data for model. |
 | `README.md` | This file with usage and documentation. |
-| `LIS3MDL.py`,`LSM6DSL.py`,`LSM9DS0.py`,`LSM9DS1.py` | Register addresses for individual sensors. |
+| `LIS3MDL.py`,`LSM6DSL.py`, `LSM9DS0.py`,`LSM9DS1.py` | Register addresses for individual sensors. |
 | `IMU.py` | Functions to interface with IMU sensor(s). |
 | `datacollection.py` | Deprecated. Collects raw and filtered data continuously. |
 | `adafruit_lsm9ds1.py` | Deprecated. Somewhat equivalent to `playerIMU.py`, although not as progressed. Only works for LSM9DS1 IMU. |
