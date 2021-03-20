@@ -1,7 +1,9 @@
 # IMU - Gesture Recognition #
 
 ## Dependencies ##
-See requirements.txt
+Main requirement is `smbus-2` or `python-smbus`. To install:
+`pip install smbus2` for pip libraries, or
+`sudo apt-get install python-smbus python3-smbus` for low-level libraries.
 
 ## IMU Usage ##
 
